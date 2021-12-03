@@ -13,5 +13,17 @@ Change `dataset_label_filter` to the source label in nearest_neigbor_attack_sst.
 
 ## Hardcoded Baseline
 
+## Top Frequent Word Baseline
+### Count Top Frequent Word and Visualize with wordcloud.
+```python
+python top_frequent_wordcloud_sst.py
+```
+### Run baseline (Top Frequent Word)
+1. Change `dataset_label_filter` to the source label in sst_freq_baseline.py and run the the file.
+2. Run follow code
+```python
+python sst_freq_baseline.py
+```
+
 ## Universal Adversarial Attack Baseline
 Change `dataset_label_filter` to the source label  in universal_adversarial_attack_sst.py and run the the file.
