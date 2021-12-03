@@ -2,6 +2,7 @@
 
 1. `pip install -r requirements.txt`
 2. `pip install overrides==3.1.0`
+3. If you run into cuda error, try reinstall pytorch via pip following instructions on [pytorch official webpage](https://pytorch.org)
 
 # Baselines
 
