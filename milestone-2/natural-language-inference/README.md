@@ -12,6 +12,7 @@ Change `dataset_label_filter` to the source label and `target_label` to the targ
 Change `dataset_label_filter` to the source label and `target_label` to the target label in nearest_neigbor_attack_snli.py and run the the file.
 
 ## Hardcoded Baseline
+Run score.py in the source directory following the run instructions in score.md
 
 ## Universal Adversarial Attack Baseline
 Change `dataset_label_filter` to the source label and `target_label` to the target label in universal_adversarial_attack_snli.py and run the the file.
