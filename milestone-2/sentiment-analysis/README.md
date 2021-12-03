@@ -13,6 +13,7 @@ Change `dataset_label_filter` to the source label in random_attack_sst.py and ru
 Change `dataset_label_filter` to the source label in nearest_neigbor_attack_sst.py and run the the file.
 
 ## Hardcoded Baseline
+Run score.py in the source directory following the run instructions in score.md
 
 ## Top Frequent Word Baseline
 ### Count Top Frequent Word and Visualize with wordcloud.
