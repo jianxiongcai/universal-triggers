@@ -1,14 +1,63 @@
 import argparse
-from sentiment-analysis import sst, utils
-from natural-language-inference import snli
+import sys
+import os.path
+import torch
+import torch.optim as optim
+from allennlp.data.dataset_readers.stanford_sentiment_tree_bank import \
+    StanfordSentimentTreeBankDatasetReader
+from allennlp.data.dataset_readers.snli import SnliReader
+from allennlp.data.iterators import BucketIterator, BasicIterator
+from allennlp.data.vocabulary import Vocabulary
+from allennlp.models import Model
+from allennlp.models import load_archive
+from allennlp.modules.seq2vec_encoders import PytorchSeq2VecWrapper
+from allennlp.modules.text_field_embedders import BasicTextFieldEmbedder
+from allennlp.modules.token_embedders.embedding import _read_pretrained_embeddings_file
+from allennlp.modules.token_embedders import Embedding
+from allennlp.nn.util import get_text_field_mask
+from allennlp.training.metrics import CategoricalAccuracy
+from allennlp.training.trainer import Trainer
+from allennlp.data.token_indexers import SingleIdTokenIndexer
+from allennlp.data.tokenizers import WordTokenizer
+from allennlp.data.iterators import BasicIterator
+sys.path.append('../universal-adversarial-triggers-base-code')
+import attacks
+import utils
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("model", type=str, help="Evaluate on Sentiment Analysis ('sst') or Natural Language Inference ('snli') model")
-parser.add_argument("triggers", type=list, help="List of triggers to evaluate")
+parser.add_argument("-t", "--triggers", type=str, nargs = '+', help="List of triggers to evaluate", required=True)
 parser.add_argument("-s", "--subset", type=str, help="Subset of data to evaluate on. \
 ('positive','negative','all' for Sentiment Analysis, 'entailment', 'contradiction', 'neutral', 'all' for Natural Language Inference)", default='all')
 
 args = parser.parse_args()
+
+class LstmClassifier(Model):
+    def __init__(self, word_embeddings, encoder, vocab):
+        super().__init__(vocab)
+        self.word_embeddings = word_embeddings
+        self.encoder = encoder
+        self.linear = torch.nn.Linear(in_features=encoder.get_output_dim(),
+                                      out_features=vocab.get_vocab_size('labels'))
+        self.accuracy = CategoricalAccuracy()
+        self.loss_function = torch.nn.CrossEntropyLoss()
+
+    def forward(self, tokens, label):
+        mask = get_text_field_mask(tokens)
+        embeddings = self.word_embeddings(tokens)
+        encoder_out = self.encoder(embeddings, mask)
+        logits = self.linear(encoder_out)
+        output = {"logits": logits}
+        if label is not None:
+            self.accuracy(logits, label)
+            output["loss"] = self.loss_function(logits, label)
+        return output
+
+    def get_metrics(self, reset=False):
+        return {'accuracy': self.accuracy.get_metric(reset)}
+
+EMBEDDING_TYPE = "w2v" # what type of word embeddings to use
 
 def main():
   if(args.model == 'sst'):
@@ -50,7 +99,7 @@ def main():
                                                   hidden_size=512,
                                                   num_layers=2,
                                                   batch_first=True))
-    model = sst.LstmClassifier(word_embeddings, encoder, vocab)
+    model = LstmClassifier(word_embeddings, encoder, vocab)
     model.cuda()
 
     # where to save the model
@@ -59,7 +108,7 @@ def main():
     # if the model already exists (its been trained), load the pre-trained weights and vocabulary
     if os.path.isfile(model_path):
         vocab = Vocabulary.from_files(vocab_path)
-        model = sst.LstmClassifier(word_embeddings, encoder, vocab)
+        model = LstmClassifier(word_embeddings, encoder, vocab)
         with open(model_path, 'rb') as f:
             model.load_state_dict(torch.load(f))
     # otherwise train model from scratch and save its weights
@@ -94,7 +143,7 @@ def main():
       for instance in dev_data:
           if instance['label'].label == dataset_label_filter:
               targeted_dev_data.append(instance)
-    elif args.subset == 'all:
+    elif args.subset == 'all':
       targeted_dev_data = dev_data
     else:
       raise RuntimeError(f"Error: {args.subset} is not a valid subset for sst")
@@ -103,9 +152,9 @@ def main():
     except KeyError:
       raise
     for trigger, token in zip(args.triggers, trigger_token_ids):
-      if token == vocab._oov_token: print(f'Warning: {token} out of vocabulary')
+      if token == vocab.get_token_index(vocab._oov_token): print(f'Warning: {trigger} out of vocabulary')
     utils.get_accuracy(model, targeted_dev_data, vocab, trigger_token_ids=None)
-    utils.get_accuracy(model, targeted_dev_data, vocab, trigger_token_ids)
+    utils.get_accuracy(model, targeted_dev_data, vocab, trigger_token_ids=trigger_token_ids)
     
   elif(args.model == 'snli'):
     single_id_indexer = SingleIdTokenIndexer(lowercase_tokens=True) # word tokenizer
@@ -148,8 +197,8 @@ def main():
     except KeyError:
       raise
     for trigger, token in zip(args.triggers, trigger_token_ids):
-      if token == vocab._oov_token: print(f'Warning: {token} out of vocabulary')
-    utils.get_accuracy(model, targeted_dev_data, vocab, trigger_token_ids, snli=True)
+      if token == vocab.get_token_index(vocab._oov_token): print(f'Warning: {trigger} out of vocabulary')
+    utils.get_accuracy(model, subset_dev_dataset, vocab, trigger_token_ids=trigger_token_ids, snli=True)
   else:
     print("ERROR: model must be 'sst' or 'snli'")
 if __name__=='__main__':
