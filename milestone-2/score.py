@@ -1,5 +1,5 @@
 import argparse
-from sentiment-anaylysis import sst, utils
+from sentiment-analysis import sst, utils
 from natural-language-inference import snli
 
 parser = argparse.ArgumentParser()
@@ -50,7 +50,7 @@ def main():
                                                   hidden_size=512,
                                                   num_layers=2,
                                                   batch_first=True))
-    model = LstmClassifier(word_embeddings, encoder, vocab)
+    model = sst.LstmClassifier(word_embeddings, encoder, vocab)
     model.cuda()
 
     # where to save the model
@@ -59,7 +59,7 @@ def main():
     # if the model already exists (its been trained), load the pre-trained weights and vocabulary
     if os.path.isfile(model_path):
         vocab = Vocabulary.from_files(vocab_path)
-        model = LstmClassifier(word_embeddings, encoder, vocab)
+        model = sst.LstmClassifier(word_embeddings, encoder, vocab)
         with open(model_path, 'rb') as f:
             model.load_state_dict(torch.load(f))
     # otherwise train model from scratch and save its weights
