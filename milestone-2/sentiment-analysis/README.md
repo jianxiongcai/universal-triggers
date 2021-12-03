@@ -19,8 +19,7 @@ Change `dataset_label_filter` to the source label in nearest_neigbor_attack_sst.
 python top_frequent_wordcloud_sst.py
 ```
 ### Run baseline (Top Frequent Word)
-1. Change `dataset_label_filter` to the source label in sst_freq_baseline.py and run the the file.
-2. Run follow code
+Change `dataset_label_filter` to the source label in sst_freq_baseline.py and run the the file.
 ```python
 python sst_freq_baseline.py
 ```
