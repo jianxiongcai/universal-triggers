@@ -1,7 +1,7 @@
 # Build Instructions
 
-1. !pip install -r requirements.txt
-2. !pip install overrides==3.1.0
+1. `pip install -r requirements.txt`
+2. `pip install overrides==3.1.0`
 
 # Baselines
 
