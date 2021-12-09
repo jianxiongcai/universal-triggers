@@ -91,6 +91,8 @@ def main():
     model.cuda()
 
     # where to save the model
+    if not os.path.exists('tmp/'):
+         os.mkdir('tmp/')
     model_path = "tmp/" + EMBEDDING_TYPE + "_" + "model.th"
     vocab_path = "tmp/" + EMBEDDING_TYPE + "_" + "vocab"
     # if the model already exists (its been trained), load the pre-trained weights and vocabulary
@@ -157,14 +159,17 @@ def main():
         averaged_grad = utils.get_average_grad(model, batch, trigger_token_ids)
 
         # pass the gradients to a particular attack to generate token candidates for each token.
-        cand_trigger_token_ids = attacks.hotflip_attack(averaged_grad,
-                                                        embedding_weight,
-                                                        trigger_token_ids,
-                                                        num_candidates=40,
-                                                        increase_loss=True)
+        # cand_trigger_token_ids = attacks.hotflip_attack(averaged_grad,
+        #                                                 embedding_weight,
+        #                                                 trigger_token_ids,
+        #                                                 num_candidates=40,
+        #                                                 increase_loss=True)
         # cand_trigger_token_ids = attacks.random_attack(embedding_weight,
         #                                                trigger_token_ids,
         #                                                num_candidates=40)
+        cand_trigger_token_ids = attacks.random_pos_attack(embedding_weight,
+                                                        trigger_token_ids, vocab=vocab,
+                                                        num_candidates=40)
         # cand_trigger_token_ids = attacks.nearest_neighbor_grad(averaged_grad,
         #                                                        embedding_weight,
         #                                                        trigger_token_ids,
@@ -177,7 +182,7 @@ def main():
         trigger_token_ids = utils.get_best_candidates(model,
                                                       batch,
                                                       trigger_token_ids,
-                                                      cand_trigger_token_ids, vocab)
+                                                      cand_trigger_token_ids, vocab, beam_size = 5)
 
     # print accuracy after adding triggers
     utils.get_accuracy(model, targeted_dev_data, vocab, trigger_token_ids)
