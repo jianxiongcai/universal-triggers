@@ -210,7 +210,7 @@ def main():
         trigger_token_ids = utils.get_best_candidates(model,
                                                       batch,
                                                       trigger_token_ids,
-                                                      cand_trigger_token_ids, vocab, beam_size = 10)
+                                                      cand_trigger_token_ids, vocab, beam_size = 5)
 
     # print accuracy after adding triggers
     utils.get_accuracy(model, targeted_dev_data, vocab, trigger_token_ids)
