@@ -4,7 +4,9 @@ embeddings, it computes the optimal token replacements. This code runs on CPU.
 """
 import torch
 import numpy
-
+import nltk
+nltk.download('brown')
+nltk.download('universal_tagset')
 def hotflip_attack(averaged_grad, embedding_matrix, trigger_token_ids,
                    increase_loss=False, num_candidates=1):
     """
@@ -45,6 +47,24 @@ def random_attack(embedding_matrix, trigger_token_ids, num_candidates=1):
         for candidate_number in range(num_candidates):
             # rand token in the embedding matrix
             rand_token = numpy.random.randint(embedding_matrix.shape[0])
+            new_trigger_token_ids[trigger_token_id][candidate_number] = rand_token
+    return new_trigger_token_ids
+    
+def random_pos_attack(embedding_matrix, trigger_token_ids, vocab, num_candidates=1, pos_sequence=['ADP','ADJ','NOUN']):
+    """
+    Randomly search over the vocabulary and verify part of speech. Gets num_candidates random samples and returns all of them.
+    """
+    assert(len(trigger_token_ids)==len(pos_sequence))
+    embedding_matrix = embedding_matrix.cpu()
+    wordtags = nltk.ConditionalFreqDist((w.lower(), t) for w, t in nltk.corpus.brown.tagged_words(tagset="universal"))
+    new_trigger_token_ids = [[None]*num_candidates for _ in range(len(trigger_token_ids))]
+    for trigger_token_id in range(len(trigger_token_ids)):
+        for candidate_number in range(num_candidates):
+            # rand token in the embedding matrix
+            rand_token = numpy.random.randint(embedding_matrix.shape[0])
+            while pos_sequence[trigger_token_id] not in list(wordtags[vocab.get_token_from_index(rand_token)]):
+                # print(vocab.get_token_from_index(rand_token),list(wordtags[vocab.get_token_from_index(rand_token)]))
+                rand_token = numpy.random.randint(embedding_matrix.shape[0])
             new_trigger_token_ids[trigger_token_id][candidate_number] = rand_token
     return new_trigger_token_ids
 
