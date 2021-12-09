@@ -148,7 +148,7 @@ def get_best_candidates(model, batch, trigger_token_ids, cand_trigger_token_ids,
         top_candidates = heapq.nlargest(beam_size, loss_per_candidate, key=itemgetter(1))
     return max(top_candidates, key=itemgetter(1))[0]
 
-def get_loss_per_candidate(index, model, batch, trigger_token_ids, cand_trigger_token_ids, vocab, snli=False, lamda=5000):
+def get_loss_per_candidate(index, model, batch, trigger_token_ids, cand_trigger_token_ids, vocab, snli=False, lamda=0):
     """
     For a particular index, the function tries all of the candidate tokens for that index.
     The function returns a list containing the candidate triggers it tried, along with their loss.
@@ -169,6 +169,6 @@ def get_loss_per_candidate(index, model, batch, trigger_token_ids, cand_trigger_
         for idx in trigger_token_ids_one_replaced:
             trigger_sentence = trigger_sentence + vocab.get_token_from_index(idx) + " "
         gpt2_loss = gpt2_perplexity(trigger_sentence)
-        loss = loss + (1/lamda) * gpt2_loss
+        loss = (1-lamda) * loss + lamda * gpt2_loss
         loss_per_candidate.append((deepcopy(trigger_token_ids_one_replaced), loss))
     return loss_per_candidate
