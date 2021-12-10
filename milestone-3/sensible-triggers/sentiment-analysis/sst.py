@@ -167,7 +167,7 @@ def main():
     
     pos_pattern_pool = [['ADV','ADJ','NOUN'], ["PRON", "VERB", "PRON"], ["ADV", "VERB", "PRON"], ["NOUN", "VERB", "ADJ"], ["VERB", "PRON", "VERB"], ["VERB", "PRON", "ADJ"], ["VERB", "PRON", "NOUN"]] 
     pos_pattern = random.choice(pos_pattern_pool)
-    if args.attack == 'hotflip_with_pos'io: print("POS pattern for this experiment is {}".format(pos_pattern))
+    if args.attack == 'hotflip_with_pos': print("POS pattern for this experiment is {}".format(pos_pattern))
 
     # sample batches, update the triggers, and repeat
     for batch in lazy_groups_of(iterator(targeted_dev_data, num_epochs=5, shuffle=True), group_size=1):
