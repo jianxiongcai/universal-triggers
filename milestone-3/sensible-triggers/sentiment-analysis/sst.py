@@ -21,6 +21,13 @@ sys.path.append('..')
 import utils
 import attacks
 import random
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-a', '--attack', type=str, help='The type of attack by which to generate trigger candidates',default = 'random')
+parser.add_argument('-l', '--lamda', type=float, help='Proportion of loss function taken by perplexity', default=0)
+parser.add_argument('-b', '--beam', type=int, help='Beam size to use in getting best candidates. 1 if not using beam search', default=1)
+args = parser.parse_args()
 
 # Simple LSTM classifier that uses the final hidden state to classify Sentiment. Based on AllenNLP
 class LstmClassifier(Model):
@@ -157,7 +164,7 @@ def main():
     
     pos_pattern_pool = [['ADV','ADJ','NOUN'], ["PRON", "VERB", "PRON"], ["ADV", "VERB", "PRON"], ["NOUN", "VERB", "ADJ"], ["VERB", "PRON", "VERB"], ["VERB", "PRON", "ADJ"], ["VERB", "PRON", "NOUN"]] 
     pos_pattern = random.choice(pos_pattern_pool)
-    print("POS pattern for this experiment is {}".format(pos_pattern))
+    if args.attack == 'hotflip_with_pos' or args.attack == 'random_pos': print("POS pattern for this experiment is {}".format(pos_pattern))
 
     # sample batches, update the triggers, and repeat
     for batch in lazy_groups_of(iterator(targeted_dev_data, num_epochs=5, shuffle=True), group_size=1):
@@ -169,48 +176,55 @@ def main():
         averaged_grad = utils.get_average_grad(model, batch, trigger_token_ids)
 
         # pass the gradients to a particular attack to generate token candidates for each token.
-        while True:
-          cand_trigger_token_ids = attacks.hotflip_with_pos_attack(averaged_grad,
-                                                          embedding_weight,
-                                                          trigger_token_ids,
-                                                          vocab,
-                                                          pos_pattern,
-                                                          num_candidates=100,
-                                                          increase_loss=True)
-          valid_sequence = True
-          for i in range(num_trigger_tokens):
-            if not len(cand_trigger_token_ids[i]):
-              valid_sequence = False
-              break
-          if valid_sequence:
-            break
-          pos_pattern = random.choice(pos_pattern_pool)
-          print("Updated POS pattern for this experiment is {}".format(pos_pattern))
+        if args.attack == 'hotflip_with_pos':
+            while True:
+              cand_trigger_token_ids = attacks.hotflip_with_pos_attack(averaged_grad,
+                                                              embedding_weight,
+                                                              trigger_token_ids,
+                                                              vocab,
+                                                              pos_pattern,
+                                                              num_candidates=100,
+                                                              increase_loss=True)
+              valid_sequence = True
+              for i in range(num_trigger_tokens):
+                if not len(cand_trigger_token_ids[i]):
+                  valid_sequence = False
+                  break
+              if valid_sequence:
+                break
+              pos_pattern = random.choice(pos_pattern_pool)
+              print("Updated POS pattern for this experiment is {}".format(pos_pattern))
 
-        print("Length of eligbible candidates - {}, {}, {}".format(len(cand_trigger_token_ids[0]), len(cand_trigger_token_ids[1]), len(cand_trigger_token_ids[2])))
-        # cand_trigger_token_ids = attacks.hotflip_attack(averaged_grad,
-        #                                                 embedding_weight,
-        #                                                 trigger_token_ids,
-        #                                                 num_candidates=40,
-        #                                                 increase_loss=True)
-        # cand_trigger_token_ids = attacks.random_attack(embedding_weight,
-        #                                                trigger_token_ids,
-        #                                                num_candidates=40)
-        # cand_trigger_token_ids = attacks.random_pos_attack(embedding_weight,
-        #                                                 trigger_token_ids, vocab=vocab,
-        #                                                 num_candidates=40)
-        # cand_trigger_token_ids = attacks.nearest_neighbor_grad(averaged_grad,
-        #                                                        embedding_weight,
-        #                                                        trigger_token_ids,
-        #                                                        tree,
-        #                                                        100,
-        #                                                        num_candidates=40,
-        #                                                        increase_loss=True)
+            print("Length of eligbible candidates - {}, {}, {}".format(len(cand_trigger_token_ids[0]), len(cand_trigger_token_ids[1]), len(cand_trigger_token_ids[2])))
+        elif args.attack == 'hotflip':
+            cand_trigger_token_ids = attacks.hotflip_attack(averaged_grad,
+                                                            embedding_weight,
+                                                            trigger_token_ids,
+                                                            num_candidates=40,
+                                                            increase_loss=True)
+        elif args.attack == 'random':
+            cand_trigger_token_ids = attacks.random_attack(embedding_weight,
+                                                            trigger_token_ids,
+                                                            num_candidates=40)
+        elif args.attack == 'random_pos':                                                    
+            cand_trigger_token_ids = attacks.random_pos_attack(embedding_weight,
+                                                            trigger_token_ids, vocab=vocab,
+                                                            num_candidates=40)
+        elif args.attack == 'nearest_neighbor':                                                
+            cand_trigger_token_ids = attacks.nearest_neighbor_grad(averaged_grad,
+                                                                    embedding_weight,
+                                                                    trigger_token_ids,
+                                                                    tree,
+                                                                    100,
+                                                                    num_candidates=40,
+                                                                    increase_loss=True)
+        else:
+            raise RuntimeError("Error: invalid attack")
         # Tries all of the candidates and returns the trigger sequence with highest loss.
         trigger_token_ids = utils.get_best_candidates(model,
                                                       batch,
                                                       trigger_token_ids,
-                                                      cand_trigger_token_ids, vocab, beam_size = 5)
+                                                      cand_trigger_token_ids, vocab, beam_size = args.beam, lamda = args.lamda)
 
     # print accuracy after adding triggers
     utils.get_accuracy(model, targeted_dev_data, vocab, trigger_token_ids)
