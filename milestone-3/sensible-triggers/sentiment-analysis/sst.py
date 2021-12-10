@@ -27,6 +27,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-a', '--attack', type=str, help='The type of attack by which to generate trigger candidates',default = 'random')
 parser.add_argument('-l', '--lamda', type=float, help='Proportion of loss function taken by perplexity', default=0)
 parser.add_argument('-b', '--beam', type=int, help='Beam size to use in getting best candidates. 1 if not using beam search', default=1)
+parser.add_argument('-s', '--sentiment', type=int, help='Sentiment to filter on. 1 to flip positive to negative; 0 to flip negative to positive', default=1)
 args = parser.parse_args()
 
 # Simple LSTM classifier that uses the final hidden state to classify Sentiment. Based on AllenNLP
@@ -143,7 +144,7 @@ def main():
 
     # filter the dataset to only positive or negative examples
     # (the trigger will cause the opposite prediction)
-    dataset_label_filter = "1"
+    dataset_label_filter = args.sentiment
     if dataset_label_filter:
       print("This experiment is for flipping positive to negative sentiment")
     else:
