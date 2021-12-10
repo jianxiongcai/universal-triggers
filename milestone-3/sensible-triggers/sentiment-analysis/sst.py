@@ -27,8 +27,10 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-a', '--attack', type=str, help='The type of attack by which to generate trigger candidates',default = 'random')
 parser.add_argument('-l', '--lamda', type=float, help='Proportion of loss function taken by perplexity', default=0)
 parser.add_argument('-b', '--beam', type=int, help='Beam size to use in getting best candidates. 1 if not using beam search', default=1)
-parser.add_argument('-s', '--sentiment', type=int, help='Sentiment to filter on. 1 to flip positive to negative; 0 to flip negative to positive', default=1)
+parser.add_argument('-s', '--sentiment', type=str, help='Sentiment to filter on. 1 to flip positive to negative; 0 to flip negative to positive', default="1")
+parder.add_argument('--beta', type=float, help='Beta parameter for loss calculation', default=5)
 args = parser.parse_args()
+if args.sentiment not in ['0','1']: raise RuntimeError("Error: sentiment must be 1 or 0")
 
 # Simple LSTM classifier that uses the final hidden state to classify Sentiment. Based on AllenNLP
 class LstmClassifier(Model):
@@ -145,7 +147,7 @@ def main():
     # filter the dataset to only positive or negative examples
     # (the trigger will cause the opposite prediction)
     dataset_label_filter = args.sentiment
-    if dataset_label_filter:
+    if dataset_label_filter == "1":
       print("This experiment is for flipping positive to negative sentiment")
     else:
       print("This experiment is for flipping negative to positive sentiment")
@@ -165,7 +167,7 @@ def main():
     
     pos_pattern_pool = [['ADV','ADJ','NOUN'], ["PRON", "VERB", "PRON"], ["ADV", "VERB", "PRON"], ["NOUN", "VERB", "ADJ"], ["VERB", "PRON", "VERB"], ["VERB", "PRON", "ADJ"], ["VERB", "PRON", "NOUN"]] 
     pos_pattern = random.choice(pos_pattern_pool)
-    if args.attack == 'hotflip_with_pos' or args.attack == 'random_pos': print("POS pattern for this experiment is {}".format(pos_pattern))
+    if args.attack == 'hotflip_with_pos'io: print("POS pattern for this experiment is {}".format(pos_pattern))
 
     # sample batches, update the triggers, and repeat
     for batch in lazy_groups_of(iterator(targeted_dev_data, num_epochs=5, shuffle=True), group_size=1):
@@ -225,7 +227,7 @@ def main():
         trigger_token_ids = utils.get_best_candidates(model,
                                                       batch,
                                                       trigger_token_ids,
-                                                      cand_trigger_token_ids, vocab, beam_size = args.beam, lamda = args.lamda)
+                                                      cand_trigger_token_ids, vocab, beam_size = args.beam, lamda = args.lamda, beta=args.beta)
 
     # print accuracy after adding triggers
     utils.get_accuracy(model, targeted_dev_data, vocab, trigger_token_ids)
