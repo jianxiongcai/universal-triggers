@@ -127,7 +127,7 @@ def get_accuracy(model, dev_dataset, vocab, trigger_token_ids=None, snli=False):
             evaluate_batch(model, batch, trigger_token_ids, snli)
         print("Current Triggers: " + print_string + " : " + str(model.get_metrics()['accuracy']))
 
-def get_best_candidates(model, batch, trigger_token_ids, cand_trigger_token_ids, vocab, snli=False, beam_size=1):
+def get_best_candidates(model, batch, trigger_token_ids, cand_trigger_token_ids, vocab, snli=False, beam_size=1, lamda = 2500):
     """"
     Given the list of candidate trigger token ids (of number of trigger words by number of candidates
     per word), it finds the best new candidate trigger.
@@ -137,7 +137,7 @@ def get_best_candidates(model, batch, trigger_token_ids, cand_trigger_token_ids,
     # (indices 1-end are just the old trigger)
     current_beam_size = min(beam_size, len(cand_trigger_token_ids[0]))
     loss_per_candidate = get_loss_per_candidate(0, model, batch, trigger_token_ids,
-                                                cand_trigger_token_ids, vocab, snli)
+                                                cand_trigger_token_ids, vocab, snli, lamda=lamda)
     # maximize the loss
     top_candidates = heapq.nlargest(current_beam_size, loss_per_candidate, key=itemgetter(1))
     # top_candidates now contains beam_size trigger sequences, each with a different 0th token
@@ -146,7 +146,7 @@ def get_best_candidates(model, batch, trigger_token_ids, cand_trigger_token_ids,
         current_beam_size = min(beam_size, len(cand_trigger_token_ids[idx]))
         for cand, _ in top_candidates: # for all the beams, try all the candidates at idx
             loss_per_candidate.extend(get_loss_per_candidate(idx, model, batch, cand,
-                                                             cand_trigger_token_ids, vocab, snli))
+                                                             cand_trigger_token_ids, vocab, snli, lamda=lamda))
         top_candidates = heapq.nlargest(current_beam_size, loss_per_candidate, key=itemgetter(1))
     return max(top_candidates, key=itemgetter(1))[0]
 
@@ -171,6 +171,6 @@ def get_loss_per_candidate(index, model, batch, trigger_token_ids, cand_trigger_
         for idx in trigger_token_ids_one_replaced:
             trigger_sentence = trigger_sentence + vocab.get_token_from_index(idx) + " "
         gpt2_loss = gpt2_perplexity(trigger_sentence)
-        loss = loss + (1/lamda) * gpt2_loss
+        loss = loss + lamda/ gpt2_loss
         loss_per_candidate.append((deepcopy(trigger_token_ids_one_replaced), loss))
     return loss_per_candidate
