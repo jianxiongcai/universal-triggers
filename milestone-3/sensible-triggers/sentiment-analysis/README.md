@@ -2,7 +2,8 @@
 
 1. `pip install -r requirements.txt`
 sst.py usage (from sst.py --help)
-```usage: sst.py [-h] [-a ATTACK] [-l LAMDA] [-b BEAM] [-s SENTIMENT]
+```
+usage: sst.py [-h] [-a ATTACK] [-l LAMDA] [-b BEAM] [-s SENTIMENT]
               [--beta BETA]
 
 optional arguments:
@@ -17,4 +18,5 @@ optional arguments:
   -s SENTIMENT, --sentiment SENTIMENT
                         Sentiment to filter on. 1 to flip positive to
                         negative; 0 to flip negative to positive
-  --beta BETA           Beta parameter for loss calculation```
+  --beta BETA           Beta parameter for loss calculation
+  ```
