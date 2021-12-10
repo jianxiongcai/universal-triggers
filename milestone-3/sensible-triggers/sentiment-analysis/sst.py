@@ -28,7 +28,7 @@ parser.add_argument('-a', '--attack', type=str, help='The type of attack by whic
 parser.add_argument('-l', '--lamda', type=float, help='Proportion of loss function taken by perplexity', default=0)
 parser.add_argument('-b', '--beam', type=int, help='Beam size to use in getting best candidates. 1 if not using beam search', default=1)
 parser.add_argument('-s', '--sentiment', type=str, help='Sentiment to filter on. 1 to flip positive to negative; 0 to flip negative to positive', default="1")
-parder.add_argument('--beta', type=float, help='Beta parameter for loss calculation', default=5)
+parser.add_argument('--beta', type=float, help='Beta parameter for loss calculation', default=5)
 args = parser.parse_args()
 if args.sentiment not in ['0','1']: raise RuntimeError("Error: sentiment must be 1 or 0")
 
