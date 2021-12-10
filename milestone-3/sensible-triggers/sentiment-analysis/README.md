@@ -13,11 +13,13 @@ optional arguments:
                         The type of attack by which to generate trigger
                         candidates
   -l LAMDA, --lamda LAMDA
-                        Proportion of loss function taken by perplexity
+                        lambda parameter for loss calculation. loss = loss +
+                        lamda * gpt2_loss + beta
   -b BEAM, --beam BEAM  Beam size to use in getting best candidates. 1 if not
                         using beam search
   -s SENTIMENT, --sentiment SENTIMENT
                         Sentiment to filter on. 1 to flip positive to
                         negative; 0 to flip negative to positive
-  --beta BETA           Beta parameter for loss calculation
+  --beta BETA           Beta parameter for loss calculation. loss = loss +
+                        lamda * gpt2_loss + beta
   ```
