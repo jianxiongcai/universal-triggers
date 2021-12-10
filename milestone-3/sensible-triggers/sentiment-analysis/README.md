@@ -1,6 +1,7 @@
 # Build Instructions
 
 1. `pip install -r requirements.txt`
+
 sst.py usage (from sst.py --help)
 ```
 usage: sst.py [-h] [-a ATTACK] [-l LAMDA] [-b BEAM] [-s SENTIMENT]
