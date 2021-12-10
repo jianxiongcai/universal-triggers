@@ -171,6 +171,6 @@ def get_loss_per_candidate(index, model, batch, trigger_token_ids, cand_trigger_
         for idx in trigger_token_ids_one_replaced:
             trigger_sentence = trigger_sentence + vocab.get_token_from_index(idx) + " "
         gpt2_loss = gpt2_perplexity(trigger_sentence)
-        loss = (1-lamda) * loss + lamda * gpt2_loss
+        loss = loss + (1/lamda) * gpt2_loss
         loss_per_candidate.append((deepcopy(trigger_token_ids_one_replaced), loss))
     return loss_per_candidate
