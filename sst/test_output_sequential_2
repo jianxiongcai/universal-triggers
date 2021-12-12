@@ -1,0 +1,553 @@
+/usr/local/lib/python3.7/site-packages/sklearn/feature_extraction/image.py:167: DeprecationWarning: `np.int` is a deprecated alias for the builtin `int`. To silence this warning, use `int` by itself. Doing this will not modify any behavior and is safe. When replacing `np.int`, you may wish to use e.g. `np.int64` or `np.int32` to specify the precision. If you wish to review your current use, check the release note link for additional information.
+Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+  dtype=np.int):
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:30: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
+Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+  method='lar', copy_X=True, eps=np.finfo(np.float).eps,
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:167: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
+Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+  method='lar', copy_X=True, eps=np.finfo(np.float).eps,
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:284: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
+Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+  eps=np.finfo(np.float).eps, copy_Gram=True, verbose=0,
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:862: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
+Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+  eps=np.finfo(np.float).eps, copy_X=True, fit_path=True,
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:1101: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
+Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+  eps=np.finfo(np.float).eps, copy_X=True, fit_path=True,
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:1127: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
+Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+  eps=np.finfo(np.float).eps, positive=False):
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:1362: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
+Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+  max_n_alphas=1000, n_jobs=None, eps=np.finfo(np.float).eps,
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:1602: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
+Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+  max_n_alphas=1000, n_jobs=None, eps=np.finfo(np.float).eps,
+/usr/local/lib/python3.7/site-packages/sklearn/linear_model/least_angle.py:1738: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
+Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+  eps=np.finfo(np.float).eps, copy_X=True, positive=False):
+/usr/local/lib/python3.7/site-packages/sklearn/decomposition/online_lda.py:29: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.
+Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+  EPS = np.finfo(np.float).eps
+98794it [00:06, 14377.17it/s]
+872it [00:00, 3185.73it/s]
+100% 98794/98794 [00:00<00:00, 133758.59it/s]
+100% 1999995/1999995 [00:38<00:00, 51717.60it/s]
+[INFO] Training Stage 0
+accuracy: 0.8854, loss: 0.2741 ||: 100% 3088/3088 [00:27<00:00, 110.51it/s]
+accuracy: 0.8498, loss: 0.3658 ||: 100% 28/28 [00:00<00:00, 166.69it/s]
+accuracy: 0.9310, loss: 0.1747 ||: 100% 3088/3088 [00:25<00:00, 119.58it/s]
+accuracy: 0.8337, loss: 0.3843 ||: 100% 28/28 [00:00<00:00, 191.53it/s]
+[INFO] Model saved to /tmp/w2v_model.th
+WARNING:root:vocabulary serialization directory /tmp/w2v_vocab is not empty
+Without Triggers: 0.75
+Current Triggers: the, the, the,  : 0.7780373831775701
+Current Triggers: heartwarming, indomitability, compassionately,  : 0.12850467289719625
+Current Triggers: persuasive, vitality, favorably,  : 0.10046728971962617
+Current Triggers: true-to-life, vitality, favorably,  : 0.09579439252336448
+Current Triggers: true-to-life, vitality, favorably,  : 0.09579439252336448
+Current Triggers: true-to-life, vitality, favorably,  : 0.09579439252336448
+Current Triggers: captivating, vitality, favorably,  : 0.09579439252336448
+Current Triggers: true-to-life, vitality, favorably,  : 0.09579439252336448
+Current Triggers: true-to-life, vitality, favorably,  : 0.09579439252336448
+Current Triggers: captivating, vitality, favorably,  : 0.09579439252336448
+Current Triggers: true-to-life, vitality, favorably,  : 0.09579439252336448
+Current Triggers: true-to-life, vitality, favorably,  : 0.09579439252336448
+Current Triggers: true-to-life, improves, favorably,  : 0.09579439252336448
+Current Triggers: admirable, improves, favorably,  : 0.09813084112149532
+Current Triggers: captivating, intellect, favorably,  : 0.102803738317757
+Current Triggers: captivating, vitality, favorably,  : 0.09579439252336448
+Current Triggers: compassionately, vitality, favorably,  : 0.09813084112149532
+Current Triggers: captivating, vitality, favorably,  : 0.09579439252336448
+Current Triggers: captivating, improves, favorably,  : 0.09813084112149532
+Current Triggers: true-to-life, vitality, favorably,  : 0.09579439252336448
+[INFO] Model Loaded from /tmp/w2v_model.th
+[INFO] Training Stage 1
+accuracy: 0.9531, loss: 0.1264 ||: 100% 3397/3397 [00:31<00:00, 108.03it/s]
+accuracy: 0.8773, loss: 0.3058 ||: 100% 28/28 [00:00<00:00, 189.31it/s]
+accuracy: 0.9745, loss: 0.0695 ||: 100% 3397/3397 [00:30<00:00, 110.83it/s]
+accuracy: 0.8429, loss: 0.4363 ||: 100% 28/28 [00:00<00:00, 187.61it/s]
+[INFO] Model saved to /tmp/w2v_model.th
+WARNING:root:vocabulary serialization directory /tmp/w2v_vocab is not empty
+Accuracy on original dataset
+Without Triggers: 0.8428899082568807
+Accuracy on combined data
+Without Triggers: 0.8415015641293013
+Accuracy on original dataset with triggers
+Current Triggers: passionately, vitality, chicago-based,  : 0.8451834862385321
+Without Triggers: 0.7476635514018691
+Current Triggers: the, the, the,  : 0.7523364485981309
+Current Triggers: coen, heartwarming, heartwarming,  : 0.030373831775700934
+Current Triggers: evenings, awake, heartwarming,  : 0.02570093457943925
+Current Triggers: evenings, awake, compassionate,  : 0.02336448598130841
+Current Triggers: evenings, awake, compassionate,  : 0.02336448598130841
+Current Triggers: evenings, awake, heartwarming,  : 0.02570093457943925
+Current Triggers: evenings, awake, compassionate,  : 0.02336448598130841
+Current Triggers: evenings, awake, compassionate,  : 0.02336448598130841
+Current Triggers: evenings, awake, heartwarming,  : 0.02570093457943925
+Current Triggers: evenings, awake, heartwarming,  : 0.02570093457943925
+Current Triggers: evenings, awake, compassionate,  : 0.02336448598130841
+Current Triggers: evenings, awake, heartwarming,  : 0.02570093457943925
+Current Triggers: evenings, awake, heartwarming,  : 0.02570093457943925
+Current Triggers: evenings, awake, heartwarming,  : 0.02570093457943925
+Current Triggers: evenings, awake, heartwarming,  : 0.02570093457943925
+Current Triggers: evenings, awake, heartwarming,  : 0.02570093457943925
+Current Triggers: evenings, awake, compassionate,  : 0.02336448598130841
+Current Triggers: evenings, awake, heartwarming,  : 0.02570093457943925
+Current Triggers: evenings, awake, heartwarming,  : 0.02570093457943925
+Current Triggers: evenings, awake, compassionate,  : 0.02336448598130841
+[INFO] Training Stage 2
+accuracy: 0.9696, loss: 0.0460 ||: 100% 4014/4014 [00:37<00:00, 106.24it/s]
+accuracy: 0.8544, loss: 0.4792 ||: 100% 28/28 [00:00<00:00, 187.82it/s]
+accuracy: 0.9891, loss: 0.0282 ||: 100% 4014/4014 [00:37<00:00, 107.45it/s]
+accuracy: 0.8383, loss: 0.5661 ||: 100% 28/28 [00:00<00:00, 178.90it/s]
+[INFO] Model saved to /tmp/w2v_model.th
+WARNING:root:vocabulary serialization directory /tmp/w2v_vocab is not empty
+Accuracy on original dataset
+Without Triggers: 0.838302752293578
+Accuracy on combined data
+Without Triggers: 0.8384819064430715
+Accuracy on original dataset with triggers
+Current Triggers: evenings, awake, compassionate,  : 0.8428899082568807
+Without Triggers: 0.8130841121495327
+Current Triggers: the, the, the,  : 0.8387850467289719
+Current Triggers: fluidity, heartwarming, heartwarming,  : 0.20327102803738317
+Current Triggers: catapulting, sparkling, incredible,  : 0.14719626168224298
+Current Triggers: believability, sparkling, incredible,  : 0.1425233644859813
+Current Triggers: kidman, sparkling, incredible,  : 0.13317757009345793
+Current Triggers: kidman, sparkling, masterful,  : 0.11214953271028037
+Current Triggers: kidman, sparkling, masterful,  : 0.11214953271028037
+Current Triggers: arliss, sparkling, masterful,  : 0.12149532710280374
+Current Triggers: arliss, sparkling, eloquent,  : 0.12850467289719625
+Current Triggers: arliss, sparkling, masterful,  : 0.12149532710280374
+Current Triggers: arliss, sparkling, masterful,  : 0.12149532710280374
+Current Triggers: arliss, sparkling, masterful,  : 0.12149532710280374
+Current Triggers: arliss, sparkling, masterful,  : 0.12149532710280374
+Current Triggers: arliss, sparkling, masterful,  : 0.12149532710280374
+Current Triggers: arliss, sparkling, masterful,  : 0.12149532710280374
+Current Triggers: arliss, sparkling, masterful,  : 0.12149532710280374
+Current Triggers: arliss, sparkling, masterful,  : 0.12149532710280374
+Current Triggers: arliss, sparkling, masterful,  : 0.12149532710280374
+Current Triggers: arliss, sparkling, masterful,  : 0.12149532710280374
+Current Triggers: arliss, sparkling, masterful,  : 0.12149532710280374
+[INFO] Training Stage 3
+accuracy: 0.9827, loss: 0.0210 ||: 100% 4631/4631 [00:44<00:00, 104.76it/s]
+accuracy: 0.8532, loss: 0.5409 ||: 100% 28/28 [00:00<00:00, 188.44it/s]
+accuracy: 0.9950, loss: 0.0130 ||: 100% 4631/4631 [00:43<00:00, 105.75it/s]
+accuracy: 0.8326, loss: 0.7811 ||: 100% 28/28 [00:00<00:00, 192.70it/s]
+[INFO] Model saved to /tmp/w2v_model.th
+WARNING:root:vocabulary serialization directory /tmp/w2v_vocab is not empty
+Accuracy on original dataset
+Without Triggers: 0.8325688073394495
+Accuracy on combined data
+Without Triggers: 0.8370313695485846
+Accuracy on original dataset with triggers
+Current Triggers: arliss, sparkling, eloquent,  : 0.838302752293578
+Without Triggers: 0.7873831775700935
+Current Triggers: the, the, the,  : 0.8107476635514018
+Current Triggers: heartwarming, twisty, twisty,  : 0.12850467289719625
+Current Triggers: creepy-scary, twisty, gyllenhaal,  : 0.08878504672897196
+Current Triggers: creepy-scary, compels, gyllenhaal,  : 0.08878504672897196
+Current Triggers: creepy-scary, compels, bourne,  : 0.07710280373831775
+Current Triggers: creepy-scary, gradually, embraces,  : 0.1308411214953271
+Current Triggers: creepy-scary, attract, significance,  : 0.08411214953271028
+Current Triggers: creepy-scary, attract, sees,  : 0.11682242990654206
+Current Triggers: creepy-scary, escapes, sees,  : 0.0911214953271028
+Current Triggers: creepy-scary, escapes, sees,  : 0.0911214953271028
+Current Triggers: creepy-scary, escapes, sees,  : 0.0911214953271028
+Current Triggers: creepy-scary, escapes, sees,  : 0.0911214953271028
+Current Triggers: creepy-scary, escapes, sees,  : 0.0911214953271028
+Current Triggers: creepy-scary, escapes, sees,  : 0.0911214953271028
+Current Triggers: creepy-scary, escapes, sees,  : 0.0911214953271028
+Current Triggers: creepy-scary, escapes, sees,  : 0.0911214953271028
+Current Triggers: creepy-scary, escapes, sees,  : 0.0911214953271028
+Current Triggers: creepy-scary, escapes, sees,  : 0.0911214953271028
+Current Triggers: creepy-scary, escapes, sees,  : 0.0911214953271028
+Current Triggers: creepy-scary, escapes, sees,  : 0.0911214953271028
+[INFO] Training Stage 4
+accuracy: 0.9892, loss: 0.0120 ||: 100% 5249/5249 [00:49<00:00, 106.78it/s]
+accuracy: 0.8383, loss: 0.6628 ||: 100% 28/28 [00:00<00:00, 192.01it/s]
+accuracy: 0.9973, loss: 0.0080 ||: 100% 5249/5249 [00:50<00:00, 104.46it/s]
+accuracy: 0.8280, loss: 0.7441 ||: 100% 28/28 [00:00<00:00, 188.58it/s]
+[INFO] Model saved to /tmp/w2v_model.th
+WARNING:root:vocabulary serialization directory /tmp/w2v_vocab is not empty
+Accuracy on original dataset
+Without Triggers: 0.8279816513761468
+Accuracy on combined data
+Without Triggers: 0.8332207967589467
+Accuracy on original dataset with triggers
+Current Triggers: creepy-scary, escapes, sees,  : 0.8211009174311926
+Without Triggers: 0.7780373831775701
+Current Triggers: the, the, the,  : 0.8107476635514018
+Current Triggers: straightforward, amount, frontman,  : 0.07009345794392523
+Current Triggers: first-class, amount, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+Current Triggers: first-class, dares, nominated,  : 0.04439252336448598
+[INFO] Training Stage 5
+accuracy: 0.9940, loss: 0.0073 ||: 100% 5866/5866 [00:56<00:00, 104.41it/s]
+accuracy: 0.8326, loss: 0.7859 ||: 100% 28/28 [00:00<00:00, 189.99it/s]
+accuracy: 0.9983, loss: 0.0052 ||: 100% 5866/5866 [00:55<00:00, 106.65it/s]
+accuracy: 0.8498, loss: 0.7765 ||: 100% 28/28 [00:00<00:00, 188.18it/s]
+accuracy: 0.9987, loss: 0.0039 ||: 100% 5866/5866 [00:56<00:00, 103.88it/s]
+accuracy: 0.8245, loss: 0.8451 ||: 100% 28/28 [00:00<00:00, 190.14it/s]
+[INFO] Model saved to /tmp/w2v_model.th
+WARNING:root:vocabulary serialization directory /tmp/w2v_vocab is not empty
+Accuracy on original dataset
+Without Triggers: 0.8245412844036697
+Accuracy on combined data
+Without Triggers: 0.8308157099697885
+Accuracy on original dataset with triggers
+Current Triggers: first-class, dares, nominated,  : 0.8348623853211009
+Without Triggers: 0.8154205607476636
+Current Triggers: the, the, the,  : 0.8411214953271028
+Current Triggers: life-embracing, tenderness, amount,  : 0.2616822429906542
+Current Triggers: embracing, comical, thick,  : 0.1588785046728972
+Current Triggers: embracing, comical, possibility,  : 0.16121495327102803
+Current Triggers: embracing, comical, offerings,  : 0.16121495327102803
+Current Triggers: embracing, comical, redgrave,  : 0.14719626168224298
+Current Triggers: embracing, comical, redgrave,  : 0.14719626168224298
+Current Triggers: embracing, comical, spin,  : 0.15186915887850466
+Current Triggers: embracing, comical, spin,  : 0.15186915887850466
+Current Triggers: embracing, comical, spin,  : 0.15186915887850466
+Current Triggers: embracing, comical, spin,  : 0.15186915887850466
+Current Triggers: embracing, comical, spin,  : 0.15186915887850466
+Current Triggers: embracing, comical, intro,  : 0.1588785046728972
+Current Triggers: embracing, comical, intro,  : 0.1588785046728972
+Current Triggers: embracing, comical, redgrave,  : 0.14719626168224298
+Current Triggers: embracing, comical, redgrave,  : 0.14719626168224298
+Current Triggers: embracing, comical, spin,  : 0.15186915887850466
+Current Triggers: embracing, comical, spin,  : 0.15186915887850466
+Current Triggers: embracing, comical, spin,  : 0.15186915887850466
+Current Triggers: embracing, comical, spin,  : 0.15186915887850466
+[INFO] Training Stage 6
+accuracy: 0.9919, loss: 0.0045 ||: 100% 6484/6484 [01:01<00:00, 104.87it/s]
+accuracy: 0.8440, loss: 0.8304 ||: 100% 28/28 [00:00<00:00, 186.82it/s]
+accuracy: 0.9990, loss: 0.0033 ||: 100% 6484/6484 [01:03<00:00, 102.65it/s]
+accuracy: 0.8200, loss: 0.8366 ||: 100% 28/28 [00:00<00:00, 191.17it/s]
+[INFO] Model saved to /tmp/w2v_model.th
+WARNING:root:vocabulary serialization directory /tmp/w2v_vocab is not empty
+Accuracy on original dataset
+Without Triggers: 0.819954128440367
+Accuracy on combined data
+Without Triggers: 0.8212137780207763
+Accuracy on original dataset with triggers
+Current Triggers: embracing, comical, intro,  : 0.8153669724770642
+Without Triggers: 0.8177570093457944
+Current Triggers: the, the, the,  : 0.8761682242990654
+Current Triggers: raucously, dramatic, goosebumps,  : 0.10747663551401869
+Current Triggers: conversation, eminently, masterful,  : 0.06074766355140187
+Current Triggers: succeeds, will, goliath,  : 0.053738317757009345
+Current Triggers: succeeds, brilliantly, goliath,  : 0.028037383177570093
+Current Triggers: succeeds, does, goliath,  : 0.030373831775700934
+Current Triggers: succeeds, does, goliath,  : 0.030373831775700934
+Current Triggers: succeeds, does, mesmerizing,  : 0.04439252336448598
+Current Triggers: succeeds, does, mesmerizing,  : 0.04439252336448598
+Current Triggers: succeeds, does, mesmerizing,  : 0.04439252336448598
+Current Triggers: succeeds, torrent, mesmerizing,  : 0.035046728971962614
+Current Triggers: succeeds, torrent, primal,  : 0.02570093457943925
+Current Triggers: succeeds, torrent, primal,  : 0.02570093457943925
+Current Triggers: succeeds, torrent, primal,  : 0.02570093457943925
+Current Triggers: succeeds, torrent, primal,  : 0.02570093457943925
+Current Triggers: succeeds, torrent, primal,  : 0.02570093457943925
+Current Triggers: succeeds, torrent, primal,  : 0.02570093457943925
+Current Triggers: succeeds, torrent, primal,  : 0.02570093457943925
+Current Triggers: succeeds, torrent, primal,  : 0.02570093457943925
+Current Triggers: succeeds, torrent, primal,  : 0.02570093457943925
+[INFO] Training Stage 7
+accuracy: 0.9917, loss: 0.0036 ||: 100% 7101/7101 [01:09<00:00, 102.40it/s]
+accuracy: 0.8119, loss: 1.0038 ||: 100% 28/28 [00:00<00:00, 180.59it/s]
+accuracy: 0.9992, loss: 0.0026 ||: 100% 7101/7101 [01:08<00:00, 103.81it/s]
+accuracy: 0.8303, loss: 0.9707 ||: 100% 28/28 [00:00<00:00, 190.48it/s]
+accuracy: 0.9993, loss: 0.0025 ||: 100% 7101/7101 [01:09<00:00, 102.06it/s]
+accuracy: 0.8394, loss: 0.9949 ||: 100% 28/28 [00:00<00:00, 186.03it/s]
+[INFO] Model saved to /tmp/w2v_model.th
+WARNING:root:vocabulary serialization directory /tmp/w2v_vocab is not empty
+Accuracy on original dataset
+Without Triggers: 0.8394495412844036
+Accuracy on combined data
+Without Triggers: 0.836744882675986
+Accuracy on original dataset with triggers
+Current Triggers: succeeds, torrent, primal,  : 0.8348623853211009
+Without Triggers: 0.8364485981308412
+Current Triggers: the, the, the,  : 0.866822429906542
+Current Triggers: eccentricities, this, pursuing,  : 0.17289719626168223
+Current Triggers: honesty, this, argument,  : 0.15186915887850466
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+Current Triggers: honesty, this, thick,  : 0.14485981308411214
+[INFO] Training Stage 8
+accuracy: 0.9934, loss: 0.0034 ||: 100% 7719/7719 [01:15<00:00, 102.17it/s]
+accuracy: 0.8314, loss: 0.8579 ||: 100% 28/28 [00:00<00:00, 177.23it/s]
+accuracy: 0.9993, loss: 0.0022 ||: 100% 7719/7719 [01:14<00:00, 104.04it/s]
+accuracy: 0.8154, loss: 0.9587 ||: 100% 28/28 [00:00<00:00, 181.13it/s]
+[INFO] Model saved to /tmp/w2v_model.th
+WARNING:root:vocabulary serialization directory /tmp/w2v_vocab is not empty
+Accuracy on original dataset
+Without Triggers: 0.8153669724770642
+Accuracy on combined data
+Without Triggers: 0.819935691318328
+Accuracy on original dataset with triggers
+Current Triggers: honesty, this, thick,  : 0.8222477064220184
+Without Triggers: 0.8037383177570093
+Current Triggers: the, the, the,  : 0.8434579439252337
+Current Triggers: affirming, witherspoon, medical,  : 0.26635514018691586
+Current Triggers: affirming, perhaps, affair,  : 0.1822429906542056
+Current Triggers: affirming, intellect, study,  : 0.18691588785046728
+Current Triggers: affirming, intellect, study,  : 0.18691588785046728
+Current Triggers: affirming, intellect, affair,  : 0.16355140186915887
+Current Triggers: affirming, intellect, affair,  : 0.16355140186915887
+Current Triggers: affirming, intellect, affair,  : 0.16355140186915887
+Current Triggers: affirming, intellect, quirks,  : 0.1658878504672897
+Current Triggers: affirming, intellect, quirks,  : 0.1658878504672897
+Current Triggers: affirming, intellect, quirks,  : 0.1658878504672897
+Current Triggers: affirming, intellect, quirks,  : 0.1658878504672897
+Current Triggers: affirming, intellect, quirks,  : 0.1658878504672897
+Current Triggers: affirming, intellect, quirks,  : 0.1658878504672897
+Current Triggers: affirming, intellect, quirks,  : 0.1658878504672897
+Current Triggers: affirming, intellect, quirks,  : 0.1658878504672897
+Current Triggers: affirming, intellect, quirks,  : 0.1658878504672897
+Current Triggers: affirming, intellect, quirks,  : 0.1658878504672897
+Current Triggers: affirming, intellect, quirks,  : 0.1658878504672897
+Current Triggers: affirming, intellect, quirks,  : 0.1658878504672897
+[INFO] Training Stage 9
+accuracy: 0.9939, loss: 0.0026 ||: 100% 8336/8336 [01:21<00:00, 102.42it/s]
+accuracy: 0.8222, loss: 0.8943 ||: 100% 28/28 [00:00<00:00, 195.74it/s]
+accuracy: 0.9994, loss: 0.0021 ||: 100% 8336/8336 [01:20<00:00, 103.30it/s]
+accuracy: 0.8280, loss: 0.9632 ||: 100% 28/28 [00:00<00:00, 183.30it/s]
+[INFO] Model saved to /tmp/w2v_model.th
+WARNING:root:vocabulary serialization directory /tmp/w2v_vocab is not empty
+Accuracy on original dataset
+Without Triggers: 0.8279816513761468
+Accuracy on combined data
+Without Triggers: 0.823904721395151
+Accuracy on original dataset with triggers
+Current Triggers: sidesplitting, intellect, quirks,  : 0.8337155963302753
+Without Triggers: 0.7686915887850467
+Current Triggers: the, the, the,  : 0.7827102803738317
+Current Triggers: entertained, is, immune,  : 0.18691588785046728
+Current Triggers: entertained, cut, paean,  : 0.13551401869158877
+Current Triggers: entertained, cut, paean,  : 0.13551401869158877
+Current Triggers: entertained, cut, paean,  : 0.13551401869158877
+Current Triggers: entertained, cut, paean,  : 0.13551401869158877
+Current Triggers: entertained, cut, paean,  : 0.13551401869158877
+Current Triggers: entertained, cut, paean,  : 0.13551401869158877
+Current Triggers: entertained, cut, paean,  : 0.13551401869158877
+Current Triggers: entertained, cut, paean,  : 0.13551401869158877
+Current Triggers: entertained, cut, paean,  : 0.13551401869158877
+Current Triggers: entertained, cut, paean,  : 0.13551401869158877
+Current Triggers: entertained, dramatic, paean,  : 0.14485981308411214
+Current Triggers: entertained, really, optimistic,  : 0.1378504672897196
+Current Triggers: entertained, really, optimistic,  : 0.1378504672897196
+Current Triggers: entertained, really, optimistic,  : 0.1378504672897196
+Current Triggers: entertained, really, paean,  : 0.13317757009345793
+Current Triggers: entertained, really, paean,  : 0.13317757009345793
+Current Triggers: entertained, really, paean,  : 0.13317757009345793
+Current Triggers: entertained, really, paean,  : 0.13317757009345793
+[INFO] Training Stage 10
+accuracy: 0.9981, loss: 0.0024 ||: 100% 8953/8953 [01:26<00:00, 103.88it/s]
+accuracy: 0.8188, loss: 0.9685 ||: 100% 28/28 [00:00<00:00, 188.78it/s]
+accuracy: 0.9994, loss: 0.0019 ||: 100% 8953/8953 [01:27<00:00, 102.46it/s]
+accuracy: 0.8303, loss: 0.9126 ||: 100% 28/28 [00:00<00:00, 180.28it/s]
+accuracy: 0.9996, loss: 0.0015 ||: 100% 8953/8953 [01:27<00:00, 102.30it/s]
+accuracy: 0.8394, loss: 1.0183 ||: 100% 28/28 [00:00<00:00, 170.69it/s]
+[INFO] Model saved to /tmp/w2v_model.th
+WARNING:root:vocabulary serialization directory /tmp/w2v_vocab is not empty
+Accuracy on original dataset
+Without Triggers: 0.8394495412844036
+Accuracy on combined data
+Without Triggers: 0.8308910891089109
+Accuracy on original dataset with triggers
+Current Triggers: entertained, really, paean,  : 0.8371559633027523
+Without Triggers: 0.7920560747663551
+Current Triggers: the, the, the,  : 0.8247663551401869
+Current Triggers: health, the, 5,  : 0.2757009345794392
+Current Triggers: illuminating, potential, roughshod,  : 0.1705607476635514
+Current Triggers: illuminating, it, roughshod,  : 0.1425233644859813
+Current Triggers: illuminating, it, roughshod,  : 0.1425233644859813
+Current Triggers: illuminating, it, roughshod,  : 0.1425233644859813
+Current Triggers: illuminating, paean, roughshod,  : 0.14953271028037382
+Current Triggers: illuminating, shine, roughshod,  : 0.13551401869158877
+Current Triggers: illuminating, shine, roughshod,  : 0.13551401869158877
+Current Triggers: illuminating, shine, roughshod,  : 0.13551401869158877
+Current Triggers: illuminating, shine, roughshod,  : 0.13551401869158877
+Current Triggers: illuminating, shine, roughshod,  : 0.13551401869158877
+Current Triggers: illuminating, shine, roughshod,  : 0.13551401869158877
+Current Triggers: illuminating, shine, roughshod,  : 0.13551401869158877
+Current Triggers: illuminating, shine, roughshod,  : 0.13551401869158877
+Current Triggers: illuminating, shine, roughshod,  : 0.13551401869158877
+Current Triggers: illuminating, shine, roughshod,  : 0.13551401869158877
+Current Triggers: illuminating, shine, roughshod,  : 0.13551401869158877
+Current Triggers: illuminating, shine, roughshod,  : 0.13551401869158877
+Current Triggers: illuminating, shine, roughshod,  : 0.13551401869158877
+[INFO] Training Stage 11
+accuracy: 0.9948, loss: 0.0020 ||: 100% 9571/9571 [01:34<00:00, 100.94it/s]
+accuracy: 0.8429, loss: 1.0413 ||: 100% 28/28 [00:00<00:00, 173.24it/s]
+accuracy: 0.9994, loss: 0.0020 ||: 100% 9571/9571 [01:34<00:00, 101.81it/s]
+accuracy: 0.8188, loss: 1.0782 ||: 100% 28/28 [00:00<00:00, 178.62it/s]
+[INFO] Model saved to /tmp/w2v_model.th
+WARNING:root:vocabulary serialization directory /tmp/w2v_vocab is not empty
+Accuracy on original dataset
+Without Triggers: 0.8188073394495413
+Accuracy on combined data
+Without Triggers: 0.8158577250833642
+Accuracy on original dataset with triggers
+Current Triggers: illuminating, shine, roughshod,  : 0.8096330275229358
+Without Triggers: 0.8107476635514018
+Current Triggers: the, the, the,  : 0.8504672897196262
+Current Triggers: explores, breath, gut-wrenching,  : 0.3177570093457944
+Current Triggers: idemoto, meditation, economical,  : 0.1588785046728972
+Current Triggers: idemoto, meditation, economical,  : 0.1588785046728972
+Current Triggers: idemoto, meditation, economical,  : 0.1588785046728972
+Current Triggers: idemoto, meditation, joys,  : 0.1542056074766355
+Current Triggers: idemoto, meditation, joys,  : 0.1542056074766355
+Current Triggers: idemoto, meditation, homes,  : 0.15654205607476634
+Current Triggers: idemoto, meditation, homes,  : 0.15654205607476634
+Current Triggers: idemoto, meditation, homes,  : 0.15654205607476634
+Current Triggers: idemoto, meditation, homes,  : 0.15654205607476634
+Current Triggers: idemoto, meditation, homes,  : 0.15654205607476634
+Current Triggers: idemoto, meditation, homes,  : 0.15654205607476634
+Current Triggers: idemoto, meditation, forbidden,  : 0.1658878504672897
+Current Triggers: idemoto, meditation, forbidden,  : 0.1658878504672897
+Current Triggers: idemoto, meditation, forbidden,  : 0.1658878504672897
+Current Triggers: idemoto, meditation, namely,  : 0.17990654205607476
+Current Triggers: idemoto, meditation, eats,  : 0.14953271028037382
+Current Triggers: idemoto, meditation, eats,  : 0.14953271028037382
+Current Triggers: idemoto, meditation, eats,  : 0.14953271028037382
+[INFO] Training Stage 12
+accuracy: 0.9954, loss: 0.0023 ||: 100% 10188/10188 [01:40<00:00, 101.45it/s]
+accuracy: 0.8291, loss: 0.9659 ||: 100% 28/28 [00:00<00:00, 181.90it/s]
+accuracy: 0.9993, loss: 0.0025 ||: 100% 10188/10188 [01:38<00:00, 103.48it/s]
+accuracy: 0.8268, loss: 1.0902 ||: 100% 28/28 [00:00<00:00, 184.12it/s]
+[INFO] Model saved to /tmp/w2v_model.th
+WARNING:root:vocabulary serialization directory /tmp/w2v_vocab is not empty
+Accuracy on original dataset
+Without Triggers: 0.8268348623853211
+Accuracy on combined data
+Without Triggers: 0.8158719108945354
+Accuracy on original dataset with triggers
+Current Triggers: idemoto, meditation, eats,  : 0.8153669724770642
+Without Triggers: 0.8130841121495327
+Current Triggers: the, the, the,  : 0.8107476635514018
+Current Triggers: good, popcorn, careers,  : 0.24766355140186916
+Current Triggers: solid, most, teendom,  : 0.1542056074766355
+Current Triggers: solid, most, behan,  : 0.16121495327102803
+Current Triggers: solid, amusements, behan,  : 0.14719626168224298
+Current Triggers: solid, amusements, rightly,  : 0.15186915887850466
+Current Triggers: solid, happening, rightly,  : 0.1261682242990654
+Current Triggers: solid, happening, rightly,  : 0.1261682242990654
+Current Triggers: solid, happening, rightly,  : 0.1261682242990654
+Current Triggers: solid, happening, rightly,  : 0.1261682242990654
+Current Triggers: solid, happening, rightly,  : 0.1261682242990654
+Current Triggers: solid, happening, rightly,  : 0.1261682242990654
+Current Triggers: solid, happening, rightly,  : 0.1261682242990654
+Current Triggers: solid, happening, rightly,  : 0.1261682242990654
+Current Triggers: solid, happening, rightly,  : 0.1261682242990654
+Current Triggers: solid, madness, rightly,  : 0.14018691588785046
+Current Triggers: solid, madness, rightly,  : 0.14018691588785046
+Current Triggers: solid, madness, rightly,  : 0.14018691588785046
+Current Triggers: solid, madness, rightly,  : 0.14018691588785046
+Current Triggers: solid, madness, rightly,  : 0.14018691588785046
+[INFO] Training Stage 13
+accuracy: 0.9952, loss: 0.0027 ||: 100% 10806/10806 [01:46<00:00, 101.23it/s]
+accuracy: 0.8234, loss: 1.0433 ||: 100% 28/28 [00:00<00:00, 180.00it/s]
+accuracy: 0.9993, loss: 0.0021 ||: 100% 10806/10806 [01:46<00:00, 101.92it/s]
+accuracy: 0.8268, loss: 0.9616 ||: 100% 28/28 [00:00<00:00, 184.10it/s]
+accuracy: 0.9994, loss: 0.0018 ||: 100% 10806/10806 [01:47<00:00, 100.74it/s]
+accuracy: 0.8291, loss: 1.0492 ||: 100% 28/28 [00:00<00:00, 180.64it/s]
+[INFO] Model saved to /tmp/w2v_model.th
+WARNING:root:vocabulary serialization directory /tmp/w2v_vocab is not empty
+Accuracy on original dataset
+Without Triggers: 0.8291284403669725
+Accuracy on combined data
+Without Triggers: 0.8237610764686577
+Accuracy on original dataset with triggers
+Current Triggers: solid, madness, discourse,  : 0.8176605504587156
+Without Triggers: 0.8037383177570093
+Current Triggers: the, the, the,  : 0.8341121495327103
+Current Triggers: upends, -rrb-, transcend,  : 0.37850467289719625
+Current Triggers: political, -rrb-, envious,  : 0.24065420560747663
+Current Triggers: hilarious, dramatized, urgent,  : 0.1542056074766355
+Current Triggers: hilarious, dramatized, urgent,  : 0.1542056074766355
+Current Triggers: hilarious, dramatized, urgent,  : 0.1542056074766355
+Current Triggers: hilarious, dramatized, urgent,  : 0.1542056074766355
+Current Triggers: hilarious, dramatized, urgent,  : 0.1542056074766355
+Current Triggers: hilarious, dramatized, urgent,  : 0.1542056074766355
+Current Triggers: hilarious, dramatized, urgent,  : 0.1542056074766355
+Current Triggers: hilarious, dramatized, urgent,  : 0.1542056074766355
+Current Triggers: detailed, dramatized, urgent,  : 0.1542056074766355
+Current Triggers: detailed, dysfunctionally, urgent,  : 0.13551401869158877
+Current Triggers: detailed, puff, urgent,  : 0.14018691588785046
+Current Triggers: detailed, overwhelming, urgent,  : 0.14953271028037382
+Current Triggers: detailed, noir, urgent,  : 0.1425233644859813
+Current Triggers: endearing, noir, urgent,  : 0.13551401869158877
+Current Triggers: endearing, seven, urgent,  : 0.1308411214953271
+Current Triggers: endearing, seven, urgent,  : 0.1308411214953271
+Current Triggers: endearing, seven, urgent,  : 0.1308411214953271
+[INFO] Training Stage 14
+accuracy: 0.9952, loss: 0.0036 ||: 100% 11423/11423 [01:54<00:00, 100.01it/s]
+accuracy: 0.8154, loss: 1.0113 ||: 100% 28/28 [00:00<00:00, 187.64it/s]
+accuracy: 0.9992, loss: 0.0026 ||: 100% 11423/11423 [01:51<00:00, 102.50it/s]
+accuracy: 0.8326, loss: 0.9459 ||: 100% 28/28 [00:00<00:00, 190.61it/s]
+accuracy: 0.9992, loss: 0.0028 ||: 100% 11423/11423 [01:53<00:00, 101.05it/s]
+accuracy: 0.8349, loss: 0.9578 ||: 100% 28/28 [00:00<00:00, 184.56it/s]
+[INFO] Model saved to /tmp/w2v_model.th
+WARNING:root:vocabulary serialization directory /tmp/w2v_vocab is not empty
+Accuracy on original dataset
+Without Triggers: 0.8348623853211009
+Accuracy on combined data
+Without Triggers: 0.830176963675877
+Accuracy on original dataset with triggers
+Current Triggers: endearing, seven, urgent,  : 0.8245412844036697
+Without Triggers: 0.8411214953271028
+Current Triggers: the, the, the,  : 0.852803738317757
+Current Triggers: enthusiastic, domestic, the,  : 0.40186915887850466
+Current Triggers: foster, puff, undercover,  : 0.1985981308411215
+Current Triggers: foster, reconstruction, undercover,  : 0.19626168224299065
+Current Triggers: foster, perseverance, undercover,  : 0.1939252336448598
+Current Triggers: foster, chick-flicks, undercover,  : 0.21495327102803738
+Current Triggers: foster, chick-flicks, self-esteem,  : 0.20794392523364486
+Current Triggers: move, chick-flicks, self-esteem,  : 0.20093457943925233
+Current Triggers: move, chick-flicks, malle,  : 0.17289719626168223
+Current Triggers: move, reconstruction, malle,  : 0.19626168224299065
+Current Triggers: move, reconstruction, malle,  : 0.19626168224299065
+Current Triggers: move, reconstruction, malle,  : 0.19626168224299065
+Current Triggers: move, reconstruction, malle,  : 0.19626168224299065
+Current Triggers: move, reconstruction, malle,  : 0.19626168224299065
+Current Triggers: move, reconstruction, malle,  : 0.19626168224299065
+Current Triggers: move, reconstruction, malle,  : 0.19626168224299065
+Current Triggers: move, reconstruction, malle,  : 0.19626168224299065
+Current Triggers: move, reconstruction, malle,  : 0.19626168224299065
+Current Triggers: move, reconstruction, malle,  : 0.19626168224299065
+Current Triggers: move, reconstruction, malle,  : 0.19626168224299065
+
