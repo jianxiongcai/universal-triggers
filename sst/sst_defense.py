@@ -1,3 +1,4 @@
+
 import random
 import sys
 import os.path
@@ -176,7 +177,7 @@ def generate_triggers(model, vocab, dev_data):
     for token_id in trigger_token_ids:
         trigger_str = vocab.get_token_from_index(token_id)
         trigger_tokens.append(Token(trigger_str))
-    return trigger_tokens
+    return trigger_token_ids, trigger_tokens
 
 def main():
     # load the binary SST dataset.
@@ -230,14 +231,15 @@ def main():
     model.train().cuda()  # rnn cannot do backwards in train mode
 
     # generate initial triggers
-    triggers = generate_triggers(model, vocab, dev_data)
+    trigger_ids, triggers = generate_triggers(model, vocab, dev_data)
 
     # prepending to training data
-    train_data_adv = []
+    
 
     for stage_id in range(1, 10):
-        data_extended = prepend_triggers(train_data, triggers, 0.1, single_id_indexer)
-        train_data_adv += data_extended
+        
+        train_data_adv = prepend_triggers(train_data, triggers, stage_id/10, single_id_indexer)
+         
         train_data_combined = train_data + train_data_adv
 
         # retrain the model with dataset including adv samples
@@ -251,9 +253,17 @@ def main():
         print("[INFO] Training Stage {}".format(stage_id))
         model = train_model(model, train_data_combined, dev_data, vocab, model_path, vocab_path)
         model.train().cuda()  # rnn cannot do backwards in train mode
-
+        #evaluate on old data
+        print('Accuracy on original dataset')
+        utils.get_accuracy(model,train_data, vocab, trigger_token_ids=None)
+        #evaluate on new train set
+        print('Accuracy on combined data')
+        utils.get_accuracy(model,train_data_combined, vocab, trigger_token_ids=None)
+        #evaluate on old triggers
+        print('Accuracy on original dataset with triggers')
+        utils.get_accuracy(model,train_data, vocab, trigger_token_ids=trigger_ids)
         # generate triggers
-        triggers = generate_triggers(model, vocab, dev_data)
+        trigger_ids, triggers = generate_triggers(model, vocab, dev_data)
 
 
 if __name__ == '__main__':
