@@ -3,6 +3,7 @@ import sys
 import os.path
 
 import allennlp.data.fields
+import numpy.random
 from sklearn.neighbors import KDTree
 import torch
 import torch.optim as optim
@@ -25,6 +26,10 @@ from allennlp.data.instance import Instance
 sys.path.append('..')
 import utils
 import attacks
+
+torch.manual_seed(52)
+random.seed(15)
+numpy.random.seed(43)
 
 # Simple LSTM classifier that uses the final hidden state to classify Sentiment. Based on AllenNLP
 class LstmClassifier(Model):
@@ -141,7 +146,7 @@ def generate_triggers(model, vocab, dev_data):
     trigger_token_ids = [vocab.get_token_index("the")] * num_trigger_tokens
 
     # sample batches, update the triggers, and repeat
-    for batch in lazy_groups_of(iterator(targeted_dev_data, num_epochs=5, shuffle=True), group_size=1):
+    for batch in lazy_groups_of(iterator(targeted_dev_data, num_epochs=3, shuffle=True), group_size=1):
         # get accuracy with current triggers
         utils.get_accuracy(model, targeted_dev_data, vocab, trigger_token_ids)
         model.train()  # rnn cannot do backwards in train mode
@@ -231,29 +236,37 @@ def main():
 
     # generate initial triggers
     triggers = generate_triggers(model, vocab, dev_data)
+    utils.reset_hooks(model)
 
     # prepending to training data
     train_data_adv = []
 
-    for stage_id in range(1, 10):
+    for stage_id in range(1, 100):
         data_extended = prepend_triggers(train_data, triggers, 0.1, single_id_indexer)
         train_data_adv += data_extended
         train_data_combined = train_data + train_data_adv
 
         # retrain the model with dataset including adv samples
         # reset the model to remove gradient hooks
-        model = None
-        model = LstmClassifier(word_embeddings, encoder, vocab)
-        model.cuda()
-        model.load_state_dict(torch.load(model_path))
-        print("[INFO] Model Loaded from " + model_path)
+        # model = None
+        # encoder = PytorchSeq2VecWrapper(torch.nn.LSTM(word_embedding_dim,
+        #                                              hidden_size=512,
+        #                                              num_layers=2,
+        #                                              batch_first=True))
+        # model = LstmClassifier(word_embeddings, encoder, vocab)
+        # model.cuda()
+        # model.load_state_dict(torch.load(model_path))
+        # print("[INFO] Model Loaded from " + model_path)
 
+        # retain the model with the combined dataset
         print("[INFO] Training Stage {}".format(stage_id))
         model = train_model(model, train_data_combined, dev_data, vocab, model_path, vocab_path)
         model.train().cuda()  # rnn cannot do backwards in train mode
 
         # generate triggers
         triggers = generate_triggers(model, vocab, dev_data)
+        utils.reset_hooks(model)
+
 
 
 if __name__ == '__main__':
