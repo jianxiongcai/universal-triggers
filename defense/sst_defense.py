@@ -26,6 +26,7 @@ from allennlp.data.instance import Instance
 sys.path.append('..')
 import utils
 import attacks
+import pickle
 
 torch.manual_seed(52)
 random.seed(15)
@@ -224,6 +225,14 @@ def augment_training_data(data, triggers, ratio, single_id_indexer):
 
     return data_adversarial
 
+def get_model_path(iteration, EMBEDDING_TYPE):
+    # model_path = "/tmp/" + EMBEDDING_TYPE + "_" + "models.th"
+    model_dir = os.path.join("/tmp", EMBEDDING_TYPE + "_models")
+    os.makedirs(model_dir, exist_ok=True)
+    model_path = os.path.join(model_dir, str(iteration) + ".pth")
+    return model_path
+
+
 # ===================================== Parameters ===================================
 ratio = 0.6                     # the ratio of original training data vs. augmented adversarial sample (can be bigger than 1)
 num_epochs = 5                   # Number of epoches to train for each iteration
@@ -272,12 +281,12 @@ def main():
     model.cuda()
 
     # where to save the model
-    model_path = "/tmp/" + EMBEDDING_TYPE + "_" + "model.th"
     vocab_path = "/tmp/" + EMBEDDING_TYPE + "_" + "vocab"
 
     print("[INFO] Training Stage 0")
     # train the initial model
-    model = train_model(model, train_data, dev_data, vocab, model_path, vocab_path, num_epochs=num_epochs)
+    model_path_0 = get_model_path(0, EMBEDDING_TYPE)
+    model = train_model(model, train_data, dev_data, vocab, model_path_0, vocab_path, num_epochs=num_epochs)
     model.train().cuda()  # rnn cannot do backwards in train mode
 
     # generate initial triggers
@@ -307,6 +316,7 @@ def main():
 
         # retain the model with the combined dataset
         print("[INFO] Training Stage {}".format(stage_id))
+        model_path = get_model_path(stage_id, EMBEDDING_TYPE)
         model = train_model(model, train_data_combined, dev_data, vocab, model_path, vocab_path, num_epochs=num_epochs)
         model.train().cuda()  # rnn cannot do backwards in train mode
 
@@ -315,7 +325,12 @@ def main():
         triggers.append(trigger_curr)
         utils.reset_hooks(model)
 
-
+    # meta = {
+    #     'triggers': triggers,
+    # }
+    # save the trigger generated.
+    with open("/tmp/trigger_generated.plk", "wb") as f:
+        pickle.dump(triggers, f)
 
 if __name__ == '__main__':
     main()
