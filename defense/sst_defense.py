@@ -59,40 +59,7 @@ class LstmClassifier(Model):
 EMBEDDING_TYPE = "w2v" # what type of word embeddings to use
 
 
-def prepend_triggers(data, trigger, ratio, single_id_indexer):
-    """
-    Append the generated trigger to part of the training data
-    @param train_data: List of allennlp.Instance
-    @param trigger: the generated universal adversarial triggers
-                    (e.g. trigger = [Token("good"), Token("good"), Token("good")])
-    @param ratio: (float) 0-1: the portion of training data to prepend the trigger
-    """
-    N_samples = int(len(data) * ratio)
-    data_raw = list(data)
-    data_shuffled = list(data)
-    random.shuffle(data_shuffled)
-    data_sampled = data_shuffled[0:N_samples]
-
-    # adversarial training samples
-    data_adversarial = []
-
-    for instance_old in data_sampled:
-        # get token and label info
-        tokens_old = instance_old.fields['tokens']
-        label_old = instance_old.fields["label"]
-
-        # generate new training instance and label
-        tokens_new = allennlp.data.fields.TextField(trigger + tokens_old.tokens, {"tokens": single_id_indexer})
-        label_new = label_old
-        instance_new = Instance({
-            'tokens': tokens_new,
-            'label': label_old
-        })
-        data_adversarial.append(instance_new)
-    return data_adversarial
-
-
-def train_model(model, train_data, dev_data, vocab, model_path, vocab_path):
+def train_model(model, train_data, dev_data, vocab, model_path, vocab_path, num_epochs):
     """
     Train the model with train_data and dev_data, then save to disk
     @return: the updated model
@@ -105,7 +72,7 @@ def train_model(model, train_data, dev_data, vocab, model_path, vocab_path):
                       iterator=iterator,
                       train_dataset=train_data,
                       validation_dataset=dev_data,
-                      num_epochs=5,
+                      num_epochs=num_epochs,
                       patience=1,
                       cuda_device=0)
     trainer.train()
@@ -114,6 +81,7 @@ def train_model(model, train_data, dev_data, vocab, model_path, vocab_path):
         torch.save(model.state_dict(), f)
     vocab.save_to_files(vocab_path)
     return model
+
 
 def generate_triggers(model, vocab, dev_data):
     # Register a gradient hook on the embeddings. This saves the gradient w.r.t. the word embeddings.
@@ -146,7 +114,7 @@ def generate_triggers(model, vocab, dev_data):
     trigger_token_ids = [vocab.get_token_index("the")] * num_trigger_tokens
 
     # sample batches, update the triggers, and repeat
-    for batch in lazy_groups_of(iterator(targeted_dev_data, num_epochs=3, shuffle=True), group_size=1):
+    for batch in lazy_groups_of(iterator(targeted_dev_data, num_epochs=5, shuffle=True), group_size=1):
         # get accuracy with current triggers
         utils.get_accuracy(model, targeted_dev_data, vocab, trigger_token_ids)
         model.train()  # rnn cannot do backwards in train mode
@@ -183,6 +151,84 @@ def generate_triggers(model, vocab, dev_data):
         trigger_tokens.append(Token(trigger_str))
     return trigger_tokens
 
+# ============================ Helper Functions for Defense ===============================
+# def prepend_triggers(data, triggers, ratio, single_id_indexer):
+#     """
+#     Append the generated trigger to part of the training data
+#     @param train_data: List of allennlp.Instance
+#     @param triggers: the generated universal adversarial triggers
+#                     (e.g. trigger = [Token("good"), Token("good"), Token("good")])
+#     @param ratio: (float) 0-1: the portion of training data to prepend the trigger
+#     """
+#     N_samples = int(len(data) * ratio)
+#     data_raw = list(data)
+#     data_shuffled = list(data)
+#     random.shuffle(data_shuffled)
+#     data_sampled = data_shuffled[0:N_samples]
+#
+#     # adversarial training samples
+#     data_adversarial = []
+#
+#     for instance_old in data_sampled:
+#         # get token and label info
+#         tokens_old = instance_old.fields['tokens']
+#         label_old = instance_old.fields["label"]
+#
+#         # generate new training instance and label
+#         tokens_new = allennlp.data.fields.TextField(trigger + tokens_old.tokens, {"tokens": single_id_indexer})
+#         label_new = label_old
+#         instance_new = Instance({
+#             'tokens': tokens_new,
+#             'label': label_old
+#         })
+#         data_adversarial.append(instance_new)
+#     return data_adversarial
+
+
+def augment_training_data(data, triggers, ratio, single_id_indexer):
+    """
+    Argument the original dataset with the generated triggers
+    @param train_data: the original training dataset
+    @param triggers: List of generated triggers
+    @param ratio: the ratio of samples to argument
+    """
+    assert isinstance(triggers, list)
+    print("[INFO] Preparing augmented training data with adversarial samples. Ratio: " + str(ratio) + " N_triggers: " + str(len(triggers)))
+    # Compute number of samples to augment
+    N_samples = int(len(data) * ratio)
+    data_raw = list(data)
+
+    # select N samples from the data to augment (copy then augment)
+    data_shuffled = list(data)
+    random.shuffle(data_shuffled)
+    data_sampled = data_shuffled[0:N_samples]
+
+    data_adversarial = []
+    for instance_old in data_sampled:
+        # get token and label info
+        tokens_old = instance_old.fields['tokens']
+        label_old = instance_old.fields["label"]
+
+        # select the trigger to prepend
+        idx = random.randint(0, len(triggers) - 1)
+        tri = triggers[idx]
+
+        # generate new training instance and label
+        tokens_new = allennlp.data.fields.TextField(tri + tokens_old.tokens, {"tokens": single_id_indexer})
+        label_new = label_old
+        instance_new = Instance({
+            'tokens': tokens_new,
+            'label': label_new
+        })
+        data_adversarial.append(instance_new)
+
+    return data_adversarial
+
+# ===================================== Parameters ===================================
+ratio = 0.6                     # the ratio of original training data vs. augmented adversarial sample (can be bigger than 1)
+num_epochs = 5                   # Number of epoches to train for each iteration
+
+# ======================================== MAIN ======================================
 def main():
     # load the binary SST dataset.
     single_id_indexer = SingleIdTokenIndexer(lowercase_tokens=True) # word tokenizer
@@ -231,19 +277,20 @@ def main():
 
     print("[INFO] Training Stage 0")
     # train the initial model
-    model = train_model(model, train_data, dev_data, vocab, model_path, vocab_path)
+    model = train_model(model, train_data, dev_data, vocab, model_path, vocab_path, num_epochs=num_epochs)
     model.train().cuda()  # rnn cannot do backwards in train mode
 
     # generate initial triggers
-    triggers = generate_triggers(model, vocab, dev_data)
+    trigger_curr = generate_triggers(model, vocab, dev_data)
     utils.reset_hooks(model)
 
     # prepending to training data
-    train_data_adv = []
+    # train_data_adv = []
+    triggers = [trigger_curr]
 
     for stage_id in range(1, 100):
-        data_extended = prepend_triggers(train_data, triggers, 0.1, single_id_indexer)
-        train_data_adv += data_extended
+        train_data_adv = augment_training_data(train_data, triggers, ratio, single_id_indexer)
+        # train_data_adv += data_extended
         train_data_combined = train_data + train_data_adv
 
         # retrain the model with dataset including adv samples
@@ -260,11 +307,12 @@ def main():
 
         # retain the model with the combined dataset
         print("[INFO] Training Stage {}".format(stage_id))
-        model = train_model(model, train_data_combined, dev_data, vocab, model_path, vocab_path)
+        model = train_model(model, train_data_combined, dev_data, vocab, model_path, vocab_path, num_epochs=num_epochs)
         model.train().cuda()  # rnn cannot do backwards in train mode
 
         # generate triggers
-        triggers = generate_triggers(model, vocab, dev_data)
+        trigger_curr = generate_triggers(model, vocab, dev_data)
+        triggers.append(trigger_curr)
         utils.reset_hooks(model)
 
 
