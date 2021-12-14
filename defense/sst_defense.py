@@ -32,6 +32,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument('-e', '--epochs', type=int, help='number of epochs to train the model on the new data',default=5)
 parser.add_argument('-r', '--ratio', type=float, help='the ratio of original training data vs. augmented adversarial sample (can be bigger than 1)', default=0.6)
+parser.add_argument('-i', '--iterations', type=int, help='Number of iterations of augmented training', default=10)
 args = parser.parse_args()
 
 torch.manual_seed(52)
@@ -303,7 +304,7 @@ def main():
     # train_data_adv = []
     triggers = [trigger_curr]
 
-    for stage_id in range(1, 100):
+    for stage_id in range(1, args.iterations+1):
         train_data_adv = augment_training_data(train_data, triggers, ratio, single_id_indexer)
         # train_data_adv += data_extended
         train_data_combined = train_data + train_data_adv
