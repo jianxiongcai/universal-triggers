@@ -156,7 +156,7 @@ def generate_triggers(model, vocab, dev_data):
     for token_id in trigger_token_ids:
         trigger_str = vocab.get_token_from_index(token_id)
         trigger_tokens.append(Token(trigger_str))
-    return trigger_tokens
+    return trigger_token_ids, trigger_tokens
 
 # ============================ Helper Functions for Defense ===============================
 # def prepend_triggers(data, triggers, ratio, single_id_indexer):
@@ -296,7 +296,7 @@ def main():
     model.train().cuda()  # rnn cannot do backwards in train mode
 
     # generate initial triggers
-    trigger_curr = generate_triggers(model, vocab, dev_data)
+    trigger_ids, trigger_curr = generate_triggers(model, vocab, dev_data)
     utils.reset_hooks(model)
 
     # prepending to training data
@@ -325,9 +325,17 @@ def main():
         model_path = get_model_path(stage_id, EMBEDDING_TYPE)
         model = train_model(model, train_data_combined, dev_data, vocab, model_path, vocab_path, num_epochs=num_epochs)
         model.train().cuda()  # rnn cannot do backwards in train mode
-
+        #evaluate on old data
+        print('[EVAL] Accuracy on original dev dataset')
+        utils.get_accuracy(model,dev_data, vocab, trigger_token_ids=None)
+        #evaluate on new train set
+        print('[EVAL] Accuracy on combined train data')
+        utils.get_accuracy(model,train_data_combined, vocab, trigger_token_ids=None)
+        #evaluate on old triggers
+        print('[EVAL] Accuracy on original dev dataset with triggers')
+        utils.get_accuracy(model,dev_data, vocab, trigger_token_ids=trigger_ids)
         # generate triggers
-        trigger_curr = generate_triggers(model, vocab, dev_data)
+        trigger_ids, trigger_curr = generate_triggers(model, vocab, dev_data)
         triggers.append(trigger_curr)
         utils.reset_hooks(model)
 
