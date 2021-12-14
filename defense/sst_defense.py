@@ -1,9 +1,9 @@
-
 import random
 import sys
 import os.path
 
 import allennlp.data.fields
+import numpy.random
 from sklearn.neighbors import KDTree
 import torch
 import torch.optim as optim
@@ -27,10 +27,10 @@ sys.path.append('..')
 import utils
 import attacks
 
-import argparse
-parser = argparse.ArgumentParser()
-parser.add_argument('-s', '--sequential', action='store_true', help='Reuse the same model during stages')
-args = parser.parse_args()
+torch.manual_seed(52)
+random.seed(15)
+numpy.random.seed(43)
+
 # Simple LSTM classifier that uses the final hidden state to classify Sentiment. Based on AllenNLP
 class LstmClassifier(Model):
     def __init__(self, word_embeddings, encoder, vocab):
@@ -146,7 +146,7 @@ def generate_triggers(model, vocab, dev_data):
     trigger_token_ids = [vocab.get_token_index("the")] * num_trigger_tokens
 
     # sample batches, update the triggers, and repeat
-    for batch in lazy_groups_of(iterator(targeted_dev_data, num_epochs=5, shuffle=True), group_size=1):
+    for batch in lazy_groups_of(iterator(targeted_dev_data, num_epochs=3, shuffle=True), group_size=1):
         # get accuracy with current triggers
         utils.get_accuracy(model, targeted_dev_data, vocab, trigger_token_ids)
         model.train()  # rnn cannot do backwards in train mode
@@ -181,7 +181,7 @@ def generate_triggers(model, vocab, dev_data):
     for token_id in trigger_token_ids:
         trigger_str = vocab.get_token_from_index(token_id)
         trigger_tokens.append(Token(trigger_str))
-    return trigger_token_ids, trigger_tokens
+    return trigger_tokens
 
 def main():
     # load the binary SST dataset.
@@ -235,49 +235,38 @@ def main():
     model.train().cuda()  # rnn cannot do backwards in train mode
 
     # generate initial triggers
-    trigger_ids, triggers = generate_triggers(model, vocab, dev_data)
+    triggers = generate_triggers(model, vocab, dev_data)
+    utils.reset_hooks(model)
 
     # prepending to training data
-    
-    # train_data_combined = train_data.copy()
-    for stage_id in range(1, 10):
-        if stage_id == 1 or not args.sequential:
-            train_data_adv = prepend_triggers(train_data, triggers, stage_id/10, single_id_indexer)
-            dev_data_adv = prepend_triggers(dev_data, triggers, stage_id/10, single_id_indexer)
-            
-            train_data_combined = train_data + train_data_adv
-            dev_data_combined = dev_data + dev_data_adv
-            model = None
-            model = LstmClassifier(word_embeddings, encoder, vocab)
-            model.cuda()
-            model.load_state_dict(torch.load(model_path))
-            print("[INFO] Model Loaded from " + model_path)
+    train_data_adv = []
 
-        else:
-            train_data_adv = prepend_triggers(train_data, triggers, .2, single_id_indexer)
-            dev_data_adv = prepend_triggers(dev_data, triggers, .2, single_id_indexer)
-            
-            train_data_combined += train_data_adv
-            dev_data_combined += dev_data_adv
-
+    for stage_id in range(1, 100):
+        data_extended = prepend_triggers(train_data, triggers, 0.1, single_id_indexer)
+        train_data_adv += data_extended
+        train_data_combined = train_data + train_data_adv
 
         # retrain the model with dataset including adv samples
         # reset the model to remove gradient hooks
-        
+        # model = None
+        # encoder = PytorchSeq2VecWrapper(torch.nn.LSTM(word_embedding_dim,
+        #                                              hidden_size=512,
+        #                                              num_layers=2,
+        #                                              batch_first=True))
+        # model = LstmClassifier(word_embeddings, encoder, vocab)
+        # model.cuda()
+        # model.load_state_dict(torch.load(model_path))
+        # print("[INFO] Model Loaded from " + model_path)
+
+        # retain the model with the combined dataset
         print("[INFO] Training Stage {}".format(stage_id))
         model = train_model(model, train_data_combined, dev_data, vocab, model_path, vocab_path)
         model.train().cuda()  # rnn cannot do backwards in train mode
-        #evaluate on old data
-        print('Accuracy on original dataset')
-        utils.get_accuracy(model,dev_data, vocab, trigger_token_ids=None)
-        #evaluate on new train set
-        print('Accuracy on combined data')
-        utils.get_accuracy(model,dev_data_combined, vocab, trigger_token_ids=None)
-        #evaluate on old triggers
-        print('Accuracy on original dataset with triggers')
-        utils.get_accuracy(model,dev_data, vocab, trigger_token_ids=trigger_ids)
+
         # generate triggers
-        trigger_ids, triggers = generate_triggers(model, vocab, dev_data)
+        triggers = generate_triggers(model, vocab, dev_data)
+        utils.reset_hooks(model)
+
 
 
 if __name__ == '__main__':
