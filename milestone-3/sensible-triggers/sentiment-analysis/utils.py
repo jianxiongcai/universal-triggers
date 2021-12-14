@@ -127,7 +127,7 @@ def get_accuracy(model, dev_dataset, vocab, trigger_token_ids=None, snli=False):
             evaluate_batch(model, batch, trigger_token_ids, snli)
         print("Current Triggers: " + print_string + " : " + str(model.get_metrics()['accuracy']))
 
-def get_best_candidates(model, batch, trigger_token_ids, cand_trigger_token_ids, vocab, snli=False, beam_size=1, lamda = 2500):
+def get_best_candidates(model, batch, trigger_token_ids, cand_trigger_token_ids, vocab, snli=False, beam_size=1):
     """"
     Given the list of candidate trigger token ids (of number of trigger words by number of candidates
     per word), it finds the best new candidate trigger.
@@ -135,22 +135,20 @@ def get_best_candidates(model, batch, trigger_token_ids, cand_trigger_token_ids,
     """
     # first round, no beams, just get the loss for each of the candidates in index 0.
     # (indices 1-end are just the old trigger)
-    current_beam_size = min(beam_size, len(cand_trigger_token_ids[0]))
     loss_per_candidate = get_loss_per_candidate(0, model, batch, trigger_token_ids,
-                                                cand_trigger_token_ids, vocab, snli, lamda=lamda)
+                                                cand_trigger_token_ids, vocab, snli)
     # maximize the loss
-    top_candidates = heapq.nlargest(current_beam_size, loss_per_candidate, key=itemgetter(1))
+    top_candidates = heapq.nlargest(beam_size, loss_per_candidate, key=itemgetter(1))
     # top_candidates now contains beam_size trigger sequences, each with a different 0th token
     for idx in range(1, len(trigger_token_ids)): # for all trigger tokens, skipping the 0th (we did it above)
         loss_per_candidate = []
-        current_beam_size = min(beam_size, len(cand_trigger_token_ids[idx]))
         for cand, _ in top_candidates: # for all the beams, try all the candidates at idx
             loss_per_candidate.extend(get_loss_per_candidate(idx, model, batch, cand,
-                                                             cand_trigger_token_ids, vocab, snli, lamda=lamda))
-        top_candidates = heapq.nlargest(current_beam_size, loss_per_candidate, key=itemgetter(1))
+                                                             cand_trigger_token_ids, vocab, snli))
+        top_candidates = heapq.nlargest(beam_size, loss_per_candidate, key=itemgetter(1))
     return max(top_candidates, key=itemgetter(1))[0]
 
-def get_loss_per_candidate(index, model, batch, trigger_token_ids, cand_trigger_token_ids, vocab, snli=False, lamda=2500):
+def get_loss_per_candidate(index, model, batch, trigger_token_ids, cand_trigger_token_ids, vocab, snli=False, lamda=5000):
     """
     For a particular index, the function tries all of the candidate tokens for that index.
     The function returns a list containing the candidate triggers it tried, along with their loss.
@@ -163,7 +161,7 @@ def get_loss_per_candidate(index, model, batch, trigger_token_ids, cand_trigger_
     # loss for the trigger without trying the candidates
     curr_loss = evaluate_batch(model, batch, trigger_token_ids, snli)['loss'].cpu().detach().numpy()
     loss_per_candidate.append((deepcopy(trigger_token_ids), curr_loss))
-    for cand_id in range(len(cand_trigger_token_ids[index])):
+    for cand_id in range(len(cand_trigger_token_ids[0])):
         trigger_token_ids_one_replaced = deepcopy(trigger_token_ids) # copy trigger
         trigger_token_ids_one_replaced[index] = cand_trigger_token_ids[index][cand_id] # replace one token
         loss = evaluate_batch(model, batch, trigger_token_ids_one_replaced, snli)['loss'].cpu().detach().numpy()
@@ -171,6 +169,6 @@ def get_loss_per_candidate(index, model, batch, trigger_token_ids, cand_trigger_
         for idx in trigger_token_ids_one_replaced:
             trigger_sentence = trigger_sentence + vocab.get_token_from_index(idx) + " "
         gpt2_loss = gpt2_perplexity(trigger_sentence)
-        loss = loss + lamda/ gpt2_loss
+        loss = loss + (1/lamda) * gpt2_loss
         loss_per_candidate.append((deepcopy(trigger_token_ids_one_replaced), loss))
     return loss_per_candidate
