@@ -27,6 +27,12 @@ sys.path.append('..')
 import utils
 import attacks
 import pickle
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-e', '--epochs', type=int, help='number of epochs to train the model on the new data',defualt=5)
+parser.add_argument('-r', '--ratio', type=float, help='the ratio of original training data vs. augmented adversarial sample (can be bigger than 1)', default=0.6)
+args = parser.parse_args()
 
 torch.manual_seed(52)
 random.seed(15)
@@ -234,8 +240,8 @@ def get_model_path(iteration, EMBEDDING_TYPE):
 
 
 # ===================================== Parameters ===================================
-ratio = 0.6                     # the ratio of original training data vs. augmented adversarial sample (can be bigger than 1)
-num_epochs = 5                   # Number of epoches to train for each iteration
+ratio = args.ratio                   # the ratio of original training data vs. augmented adversarial sample (can be bigger than 1)
+num_epochs = args.epochs             # Number of epoches to train for each iteration
 
 # ======================================== MAIN ======================================
 def main():
