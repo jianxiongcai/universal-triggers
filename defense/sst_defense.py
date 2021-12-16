@@ -27,6 +27,13 @@ sys.path.append('..')
 import utils
 import attacks
 import pickle
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-e', '--epochs', type=int, help='number of epochs to train the model on the new data',default=5)
+parser.add_argument('-r', '--ratio', type=float, help='the ratio of original training data vs. augmented adversarial sample (can be bigger than 1)', default=0.6)
+parser.add_argument('-i', '--iterations', type=int, help='Number of iterations of augmented training', default=10)
+args = parser.parse_args()
 
 torch.manual_seed(52)
 random.seed(15)
@@ -150,7 +157,7 @@ def generate_triggers(model, vocab, dev_data):
     for token_id in trigger_token_ids:
         trigger_str = vocab.get_token_from_index(token_id)
         trigger_tokens.append(Token(trigger_str))
-    return trigger_tokens
+    return trigger_token_ids, trigger_tokens
 
 # ============================ Helper Functions for Defense ===============================
 # def prepend_triggers(data, triggers, ratio, single_id_indexer):
@@ -234,8 +241,8 @@ def get_model_path(iteration, EMBEDDING_TYPE):
 
 
 # ===================================== Parameters ===================================
-ratio = 0.6                     # the ratio of original training data vs. augmented adversarial sample (can be bigger than 1)
-num_epochs = 5                   # Number of epoches to train for each iteration
+ratio = args.ratio                   # the ratio of original training data vs. augmented adversarial sample (can be bigger than 1)
+num_epochs = args.epochs             # Number of epoches to train for each iteration
 
 # ======================================== MAIN ======================================
 def main():
@@ -290,14 +297,14 @@ def main():
     model.train().cuda()  # rnn cannot do backwards in train mode
 
     # generate initial triggers
-    trigger_curr = generate_triggers(model, vocab, dev_data)
+    trigger_ids, trigger_curr = generate_triggers(model, vocab, dev_data)
     utils.reset_hooks(model)
 
     # prepending to training data
     # train_data_adv = []
     triggers = [trigger_curr]
 
-    for stage_id in range(1, 100):
+    for stage_id in range(1, args.iterations+1):
         train_data_adv = augment_training_data(train_data, triggers, ratio, single_id_indexer)
         # train_data_adv += data_extended
         train_data_combined = train_data + train_data_adv
@@ -319,9 +326,17 @@ def main():
         model_path = get_model_path(stage_id, EMBEDDING_TYPE)
         model = train_model(model, train_data_combined, dev_data, vocab, model_path, vocab_path, num_epochs=num_epochs)
         model.train().cuda()  # rnn cannot do backwards in train mode
-
+        #evaluate on old data
+        print('[EVAL] Accuracy on original dev dataset')
+        utils.get_accuracy(model,dev_data, vocab, trigger_token_ids=None)
+        #evaluate on new train set
+        print('[EVAL] Accuracy on combined train data')
+        utils.get_accuracy(model,train_data_combined, vocab, trigger_token_ids=None)
+        #evaluate on old triggers
+        print('[EVAL] Accuracy on original dev dataset with triggers')
+        utils.get_accuracy(model,dev_data, vocab, trigger_token_ids=trigger_ids)
         # generate triggers
-        trigger_curr = generate_triggers(model, vocab, dev_data)
+        trigger_ids, trigger_curr = generate_triggers(model, vocab, dev_data)
         triggers.append(trigger_curr)
         utils.reset_hooks(model)
 
