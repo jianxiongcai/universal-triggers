@@ -115,6 +115,7 @@ def get_accuracy(model, dev_dataset, vocab, trigger_token_ids=None, snli=False):
     iterator.index_with(vocab)
     if trigger_token_ids is None:
         for batch in lazy_groups_of(iterator(dev_dataset, num_epochs=1, shuffle=False), group_size=1):
+            batchToString(batch, vocab)
             evaluate_batch(model, batch, trigger_token_ids, snli)
         print("Without Triggers: " + str(model.get_metrics()['accuracy']))
     else:
@@ -167,3 +168,28 @@ def get_loss_per_candidate(index, model, batch, trigger_token_ids, cand_trigger_
         loss = evaluate_batch(model, batch, trigger_token_ids_one_replaced, snli)['loss'].cpu().detach().numpy()
         loss_per_candidate.append((deepcopy(trigger_token_ids_one_replaced), loss))
     return loss_per_candidate
+
+
+def batchToString(batch, vocab):
+    # get the data
+    assert len(batch) == 1, "Length of batch is non-zero!"
+    data_tokens = batch[0]['tokens']["tokens"]
+
+    # data_label
+
+    # vocab.get_token_from_index()
+    res = []
+    # convert each sample in the batch to a string
+    for batch_i in range(data_tokens.shape[0]):
+        print_string = ""
+        for idx_tensor in data_tokens[batch_i, :]:
+            idx_num = int(idx_tensor.item())
+            word = vocab.get_token_from_index(idx_num)
+            print_string = print_string + word + " "
+        # comment out this if not!
+        print("[INFO] " + print_string)
+        res.append({
+            'tokens': print_string,
+            'labels': None
+        })
+    return res
