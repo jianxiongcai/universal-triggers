@@ -27,13 +27,6 @@ sys.path.append('..')
 import utils
 import attacks
 import pickle
-import argparse
-
-parser = argparse.ArgumentParser()
-parser.add_argument('-e', '--epochs', type=int, help='number of epochs to train the model on the new data',default=5)
-parser.add_argument('-r', '--ratio', type=float, help='the ratio of original training data vs. augmented adversarial sample (can be bigger than 1)', default=0.6)
-parser.add_argument('-i', '--iterations', type=int, help='Number of iterations of augmented training', default=10)
-args = parser.parse_args()
 
 torch.manual_seed(52)
 random.seed(15)
@@ -114,7 +107,7 @@ def generate_triggers(model, vocab, dev_data):
             targeted_dev_data.append(instance)
 
     # get accuracy before adding triggers
-    utils.get_accuracy(model, targeted_dev_data, vocab, trigger_token_ids=None)
+    utils.get_accuracy(model, targeted_dev_data, vocab, trigger_token_ids=None, do_error_analysis=True)
     model.train()  # rnn cannot do backwards in train mode
 
     # initialize triggers which are concatenated to the input
@@ -124,7 +117,7 @@ def generate_triggers(model, vocab, dev_data):
     # sample batches, update the triggers, and repeat
     for batch in lazy_groups_of(iterator(targeted_dev_data, num_epochs=5, shuffle=True), group_size=1):
         # get accuracy with current triggers
-        utils.get_accuracy(model, targeted_dev_data, vocab, trigger_token_ids)
+        utils.get_accuracy(model, targeted_dev_data, vocab, trigger_token_ids, do_error_analysis=True)
         model.train()  # rnn cannot do backwards in train mode
 
         # get gradient w.r.t. trigger embeddings for current batch
@@ -157,7 +150,7 @@ def generate_triggers(model, vocab, dev_data):
     for token_id in trigger_token_ids:
         trigger_str = vocab.get_token_from_index(token_id)
         trigger_tokens.append(Token(trigger_str))
-    return trigger_token_ids, trigger_tokens
+    return trigger_tokens
 
 # ============================ Helper Functions for Defense ===============================
 # def prepend_triggers(data, triggers, ratio, single_id_indexer):
@@ -232,35 +225,14 @@ def augment_training_data(data, triggers, ratio, single_id_indexer):
 
     return data_adversarial
 
-def get_model_path(iteration, EMBEDDING_TYPE):
-    # model_path = "/tmp/" + EMBEDDING_TYPE + "_" + "models.th"
-    model_dir = os.path.join("/tmp", EMBEDDING_TYPE + "_models")
-    os.makedirs(model_dir, exist_ok=True)
-    model_path = os.path.join(model_dir, str(iteration) + ".pth")
-    return model_path
-
-
 # ===================================== Parameters ===================================
 alpha = 1
-ratio = args.ratio                   # the ratio of original training data vs. augmented adversarial sample (also known as beta in the report)
-num_epochs = args.epochs             # Number of epoches to train for each iteration
+ratio = 1.0                     # the ratio of original training data vs. augmented adversarial sample (referred as beta in the report)
+num_epochs = 5                   # Number of epoches to train for each iteration
 
 # ======================================== MAIN ======================================
-def main():
-    # load the binary SST dataset.
-    single_id_indexer = SingleIdTokenIndexer(lowercase_tokens=True) # word tokenizer
-    # use_subtrees gives us a bit of extra data by breaking down each example into sub sentences.
-    reader = StanfordSentimentTreeBankDatasetReader(granularity="2-class",
-                                                    token_indexers={"tokens": single_id_indexer},
-                                                    use_subtrees=True)
-    train_data = reader.read('https://s3-us-west-2.amazonaws.com/allennlp/datasets/sst/train.txt')
-    reader = StanfordSentimentTreeBankDatasetReader(granularity="2-class",
-                                                    token_indexers={"tokens": single_id_indexer})
-    dev_data = reader.read('https://s3-us-west-2.amazonaws.com/allennlp/datasets/sst/dev.txt')
-    # test_dataset = reader.read('data/sst/test.txt')
 
-    vocab = Vocabulary.from_instances(train_data)
-
+def run_eval_once(model_path, vocab, dev_data):
     # Randomly initialize vectors
     if EMBEDDING_TYPE == "None":
         token_embedding = Embedding(num_embeddings=vocab.get_vocab_size('tokens'), embedding_dim=300)
@@ -289,67 +261,36 @@ def main():
     model.cuda()
 
     # where to save the model
-    vocab_path = "/tmp/" + EMBEDDING_TYPE + "_" + "vocab"
+    # vocab_path = "/tmp/" + EMBEDDING_TYPE + "_" + "vocab"
 
-    print("[INFO] Training Stage 0")
+    print("[INFO] Eval Stage")
+
+    model.load_state_dict(torch.load(model_path))
+    print("[INFO] Model Loaded From: " + model_path)
     # train the initial model
-    model_path_0 = get_model_path(0, EMBEDDING_TYPE)
-    model = train_model(model, train_data, dev_data, vocab, model_path_0, vocab_path, num_epochs=num_epochs)
     model.train().cuda()  # rnn cannot do backwards in train mode
 
     # generate initial triggers
-    trigger_ids, trigger_curr = generate_triggers(model, vocab, dev_data)
-    utils.reset_hooks(model)
+    trigger_curr = generate_triggers(model, vocab, dev_data)
 
-    # prepending to training data
-    # train_data_adv = []
-    triggers = [trigger_curr]
+def main():
+    # load the binary SST dataset.
+    single_id_indexer = SingleIdTokenIndexer(lowercase_tokens=True) # word tokenizer
+    # use_subtrees gives us a bit of extra data by breaking down each example into sub sentences.
+    reader = StanfordSentimentTreeBankDatasetReader(granularity="2-class",
+                                                    token_indexers={"tokens": single_id_indexer},
+                                                    use_subtrees=True)
+    train_data = reader.read('https://s3-us-west-2.amazonaws.com/allennlp/datasets/sst/train.txt')
+    reader = StanfordSentimentTreeBankDatasetReader(granularity="2-class",
+                                                    token_indexers={"tokens": single_id_indexer})
+    dev_data = reader.read('https://s3-us-west-2.amazonaws.com/allennlp/datasets/sst/dev.txt')
+    # test_dataset = reader.read('data/sst/test.txt')
 
-    for stage_id in range(1, args.iterations+1):
-        train_data_adv = augment_training_data(train_data, triggers, ratio, single_id_indexer)
-        # train_data_adv += data_extended
-        if alpha == 1:
-            train_data_combined = train_data + train_data_adv
-        else:
-            train_data_combined = train_data_adv
+    vocab = Vocabulary.from_instances(train_data)
 
-        # retrain the model with dataset including adv samples
-        # reset the model to remove gradient hooks
-        # model = None
-        # encoder = PytorchSeq2VecWrapper(torch.nn.LSTM(word_embedding_dim,
-        #                                              hidden_size=512,
-        #                                              num_layers=2,
-        #                                              batch_first=True))
-        # model = LstmClassifier(word_embeddings, encoder, vocab)
-        # model.cuda()
-        # model.load_state_dict(torch.load(model_path))
-        # print("[INFO] Model Loaded from " + model_path)
+    # run_eval_once("/tmp/w2v_models_4/0.pth", vocab, dev_data)
 
-        # retain the model with the combined dataset
-        print("[INFO] Training Stage {}".format(stage_id))
-        model_path = get_model_path(stage_id, EMBEDDING_TYPE)
-        model = train_model(model, train_data_combined, dev_data, vocab, model_path, vocab_path, num_epochs=num_epochs)
-        model.train().cuda()  # rnn cannot do backwards in train mode
-        #evaluate on old data
-        print('[EVAL] Accuracy on original dev dataset')
-        utils.get_accuracy(model,dev_data, vocab, trigger_token_ids=None)
-        #evaluate on new train set
-        print('[EVAL] Accuracy on combined train data')
-        utils.get_accuracy(model,train_data_combined, vocab, trigger_token_ids=None)
-        #evaluate on old triggers
-        print('[EVAL] Accuracy on original dev dataset with triggers')
-        utils.get_accuracy(model,dev_data, vocab, trigger_token_ids=trigger_ids)
-        # generate triggers
-        trigger_ids, trigger_curr = generate_triggers(model, vocab, dev_data)
-        triggers.append(trigger_curr)
-        utils.reset_hooks(model)
-
-    # meta = {
-    #     'triggers': triggers,
-    # }
-    # save the trigger generated.
-    with open("/tmp/trigger_generated.plk", "wb") as f:
-        pickle.dump(triggers, f)
+    run_eval_once("/tmp/w2v_models_4/99.pth", vocab, dev_data)
 
 if __name__ == '__main__':
     main()

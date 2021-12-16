@@ -46,18 +46,30 @@ def add_hooks(model):
                 module._token_embedders[embed].weight.requires_grad = True
             hook_handlers.append(module.register_backward_hook(extract_grad_hook))
 
-def evaluate_batch(model, batch, trigger_token_ids=None, snli=False):
+def evaluate_batch(model, batch, trigger_token_ids=None, snli=False, vocab=None):
     """
     Takes a batch of classification examples (SNLI or SST), and runs them through the model.
     If trigger_token_ids is not None, then it will append the tokens to the input.
     This funtion is used to get the model's accuracy and/or the loss with/without the trigger.
     """
+    if vocab is not None:
+        data_str = batchToString(batch, vocab)
+
     batch = move_to_device(batch[0], cuda_device=0)
     if trigger_token_ids is None:
         if snli:
-            model(batch['premise'], batch['hypothesis'], batch['label'])
+            output_dict = model(batch['premise'], batch['hypothesis'], batch['label'])
         else:
-            model(batch['tokens'], batch['label'])
+            output_dict = model(batch['tokens'], batch['label'])
+
+            if vocab is not None:  # Error Analysis
+                pred = torch.argmax(output_dict["logits"], dim=1)
+                for i, data in enumerate(data_str, 0):
+                    words = data["tokens"]
+                    label = data["labels"]
+                    print("[INFO] Predicted " + str(pred[i].item()) + "[INFO] Ground-truth " + str(label) + " Input: " + words)
+
+                debug = True
         return None
     else:
         trigger_sequence_tensor = torch.LongTensor(deepcopy(trigger_token_ids))
@@ -101,7 +113,7 @@ def get_average_grad(model, batch, trigger_token_ids, target_label=None, snli=Fa
     averaged_grad = averaged_grad[0:len(trigger_token_ids)] # return just trigger grads
     return averaged_grad
 
-def get_accuracy(model, dev_dataset, vocab, trigger_token_ids=None, snli=False):
+def get_accuracy(model, dev_dataset, vocab, trigger_token_ids=None, snli=False, do_error_analysis=False):
     """
     When trigger_token_ids is None, gets accuracy on the dev_dataset. Otherwise, gets accuracy with
     triggers prepended for the whole dev_dataset.
@@ -115,8 +127,10 @@ def get_accuracy(model, dev_dataset, vocab, trigger_token_ids=None, snli=False):
     iterator.index_with(vocab)
     if trigger_token_ids is None:
         for batch in lazy_groups_of(iterator(dev_dataset, num_epochs=1, shuffle=False), group_size=1):
-            batchToString(batch, vocab)
-            evaluate_batch(model, batch, trigger_token_ids, snli)
+            if do_error_analysis:
+                evaluate_batch(model, batch, trigger_token_ids, snli, vocab=vocab)
+            else:
+                evaluate_batch(model, batch, trigger_token_ids, snli)
         print("Without Triggers: " + str(model.get_metrics()['accuracy']))
     else:
         print_string = ""
@@ -176,6 +190,7 @@ def batchToString(batch, vocab):
     data_tokens = batch[0]['tokens']["tokens"]
 
     # data_label
+    data_labels = batch[0]["label"]
 
     # vocab.get_token_from_index()
     res = []
@@ -185,11 +200,12 @@ def batchToString(batch, vocab):
         for idx_tensor in data_tokens[batch_i, :]:
             idx_num = int(idx_tensor.item())
             word = vocab.get_token_from_index(idx_num)
-            print_string = print_string + word + " "
+            if (word != "@@PADDING@@"):
+                print_string = print_string + word + " "
         # comment out this if not!
-        print("[INFO] " + print_string)
+        # print("[INFO] " + print_string)
         res.append({
             'tokens': print_string,
-            'labels': None
+            'labels': data_labels[batch_i].item()
         })
     return res
